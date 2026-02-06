@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>HoneyLua UI Preview</title>
+  <style>
+    :root {
+      --honey: #ffb044;
+      --honey-dark: #b77c25;
+      --honey-light: #ffedc8;
+      --honey-amber: #ffdb91;
+      --honey-text: #5c3711;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: "Segoe UI", system-ui, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background: radial-gradient(circle at top, #fff4da, #f0c15a);
+      color: var(--honey-text);
+    }
+
+    .panel {
+      width: 520px;
+      background: var(--honey-amber);
+      border: 2px solid var(--honey-dark);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 18px 40px rgba(92, 55, 17, 0.25);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .panel::before {
+      content: "";
+      position: absolute;
+      inset: -60px;
+      background: repeating-linear-gradient(
+        60deg,
+        rgba(255, 237, 200, 0.5) 0,
+        rgba(255, 237, 200, 0.5) 28px,
+        rgba(255, 219, 145, 0.45) 28px,
+        rgba(255, 219, 145, 0.45) 56px
+      );
+      opacity: 0.25;
+      z-index: 0;
+    }
+
+    .panel > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    h1 {
+      margin: 0 0 6px;
+      font-size: 22px;
+    }
+
+    .status {
+      font-size: 14px;
+      color: #784f1c;
+      margin-bottom: 16px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+    }
+
+    .field label {
+      font-weight: 600;
+      font-size: 13px;
+    }
+
+    input,
+    textarea {
+      border: none;
+      border-radius: 10px;
+      padding: 10px 12px;
+      background: var(--honey-light);
+      color: var(--honey-text);
+      font-size: 14px;
+    }
+
+    textarea {
+      min-height: 70px;
+      resize: none;
+    }
+
+    .toggles {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .toggle {
+      background: var(--honey);
+      border-radius: 10px;
+      padding: 8px 14px;
+      font-weight: 700;
+      font-size: 13px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .toggle span {
+      background: #fff8e9;
+      border-radius: 999px;
+      padding: 2px 10px;
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .actions button {
+      border: none;
+      border-radius: 10px;
+      background: var(--honey);
+      color: var(--honey-text);
+      font-weight: 700;
+      padding: 10px;
+      cursor: pointer;
+    }
+
+    .tag {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-weight: 700;
+      color: #c17b1a;
+    }
+  </style>
+</head>
+<body>
+  <div class="panel">
+    <div class="tag">Honey Theme</div>
+    <h1>HoneyLua Config Manager</h1>
+    <div class="status">Ready • Auto load enabled • Auto save enabled</div>
+
+    <div class="grid">
+      <div class="field">
+        <label>Config Name</label>
+        <input value="default" />
+      </div>
+      <div class="field">
+        <label>Honey Level (1-10)</label>
+        <input value="5" />
+      </div>
+      <div class="field">
+        <label>Glow</label>
+        <input value="ON" />
+      </div>
+      <div class="field">
+        <label>Notes</label>
+        <textarea>Sweet and smooth.</textarea>
+      </div>
+    </div>
+
+    <div class="toggles">
+      <div class="toggle">Auto Load <span>ON</span></div>
+      <div class="toggle">Auto Save <span>ON</span></div>
+    </div>
+
+    <div class="actions">
+      <button>Create</button>
+      <button>Save</button>
+      <button>Load</button>
+      <button>Reset</button>
+    </div>
+  </div>
+</body>
+</html>
