@@ -507,24 +507,83 @@ local function createTab(tabName, isSettings)
         Instance.new("UICorner", lf).CornerRadius = UDim.new(0, 6)
         local ll = Instance.new("UIListLayout"); ll.Padding = UDim.new(0, 2); ll.Parent = lf
         local lp = Instance.new("UIPadding"); lp.PaddingTop = UDim.new(0, 3); lp.PaddingBottom = UDim.new(0, 3); lp.PaddingLeft = UDim.new(0, 3); lp.PaddingRight = UDim.new(0, 3); lp.Parent = lf
+        
         local items, selected, isOpen, itemBtns = options.items or {}, options.default or (options.items or {})[1], false, {}
-        local function sel(it) selected = it; dd.Text = "  " .. tostring(it); if options.onChange then options.onChange(it) end end
-        local function close() if not isOpen then return end; isOpen = false; TweenService:Create(arrow, TweenInfo.new(0.2), {Rotation = 0}):Play(); TweenService:Create(lf, TweenInfo.new(0.2), {Size = UDim2.new(1, 0, 0, 0)}):Play(); task.delay(0.2, function() if not isOpen then lf.Visible = false end end) end
-        local function open() if isOpen then return end; isOpen = true; lf.Visible = true; lf.Size = UDim2.new(1, 0, 0, 0); TweenService:Create(arrow, TweenInfo.new(0.2), {Rotation = 180}):Play(); TweenService:Create(lf, TweenInfo.new(0.25, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Size = UDim2.new(1, 0, 0, #items * 24 + 8)}):Play()
-            for i, b in ipairs(itemBtns) do b.Position = UDim2.new(0, -15, 0, 0); b.BackgroundTransparency = 1; task.delay(i * 0.03, function() TweenService:Create(b, TweenInfo.new(0.2, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Position = UDim2.new(0, 0, 0, 0), BackgroundTransparency = 0}):Play() end) end
+        
+        local function sel(it) 
+            selected = it
+            dd.Text = "  " .. tostring(it)
+            if options.onChange then options.onChange(it) end 
         end
+        
+        local function close() 
+            if not isOpen then return end
+            isOpen = false
+            TweenService:Create(arrow, TweenInfo.new(0.2), {Rotation = 0}):Play()
+            TweenService:Create(lf, TweenInfo.new(0.2), {Size = UDim2.new(1, 0, 0, 0)}):Play()
+            task.delay(0.2, function() if not isOpen then lf.Visible = false end end) 
+        end
+        
+        local function open() 
+            if isOpen then return end
+            isOpen = true
+            lf.Visible = true
+            lf.Size = UDim2.new(1, 0, 0, 0)
+            TweenService:Create(arrow, TweenInfo.new(0.2), {Rotation = 180}):Play()
+            TweenService:Create(lf, TweenInfo.new(0.25, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Size = UDim2.new(1, 0, 0, math.min(#items * 24 + 8, 200))}):Play()
+            
+            for i, b in ipairs(itemBtns) do 
+                b.Position = UDim2.new(0, -15, 0, 0)
+                b.BackgroundTransparency = 1
+                task.delay(i * 0.03, function() 
+                    TweenService:Create(b, TweenInfo.new(0.2, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Position = UDim2.new(0, 0, 0, 0), BackgroundTransparency = 0}):Play() 
+                end) 
+            end 
+        end
+        
         dd.MouseButton1Click:Connect(function() if isOpen then close() else open() end end)
-        for i, it in ipairs(items) do
-            local ib = Instance.new("TextButton"); ib.Size = UDim2.new(1, 0, 0, 20); ib.BackgroundColor3 = Color3.fromRGB(65, 55, 45); ib.BorderSizePixel = 0; ib.Font = Enum.Font.Gotham; ib.TextSize = 10; ib.TextColor3 = Color3.fromRGB(200, 180, 140); ib.Text = tostring(it); ib.AutoButtonColor = false; ib.ZIndex = 51; ib.Parent = lf
-            Instance.new("UICorner", ib).CornerRadius = UDim.new(0, 4)
-            ib.MouseEnter:Connect(function() TweenService:Create(ib, TweenInfo.new(0.1), {BackgroundColor3 = Color3.fromRGB(255, 190, 80), TextColor3 = Color3.fromRGB(40, 30, 15)}):Play() end)
-            ib.MouseLeave:Connect(function() TweenService:Create(ib, TweenInfo.new(0.1), {BackgroundColor3 = Color3.fromRGB(65, 55, 45), TextColor3 = Color3.fromRGB(200, 180, 140)}):Play() end)
-            ib.MouseButton1Click:Connect(function() sel(it); close() end)
-            table.insert(itemBtns, ib)
+        
+        local function createButtons()
+            for _, b in ipairs(itemBtns) do b:Destroy() end
+            table.clear(itemBtns)
+            for i, it in ipairs(items) do
+                local ib = Instance.new("TextButton")
+                ib.Size = UDim2.new(1, 0, 0, 20)
+                ib.BackgroundColor3 = Color3.fromRGB(65, 55, 45)
+                ib.BorderSizePixel = 0
+                ib.Font = Enum.Font.Gotham
+                ib.TextSize = 10
+                ib.TextColor3 = Color3.fromRGB(200, 180, 140)
+                ib.Text = tostring(it)
+                ib.AutoButtonColor = false
+                ib.ZIndex = 51
+                ib.Parent = lf
+                Instance.new("UICorner", ib).CornerRadius = UDim.new(0, 4)
+                ib.MouseEnter:Connect(function() TweenService:Create(ib, TweenInfo.new(0.1), {BackgroundColor3 = Color3.fromRGB(255, 190, 80), TextColor3 = Color3.fromRGB(40, 30, 15)}):Play() end)
+                ib.MouseLeave:Connect(function() TweenService:Create(ib, TweenInfo.new(0.1), {BackgroundColor3 = Color3.fromRGB(65, 55, 45), TextColor3 = Color3.fromRGB(200, 180, 140)}):Play() end)
+                ib.MouseButton1Click:Connect(function() sel(it); close() end)
+                table.insert(itemBtns, ib)
+            end
         end
+        
+        createButtons()
         sel(selected)
+        
         registerControl(options.id, selected, function() return selected end, function(v) sel(v) end)
-        return {label = lbl, dropdown = dd, frame = df}
+        
+        local dropdownApi = {label = lbl, dropdown = dd, frame = df}
+        function dropdownApi:SetItems(newItems)
+            items = newItems or {}
+            createButtons()
+            if not table.find(items, selected) then
+                sel(items[1] or "None")
+            end
+            if isOpen then
+                TweenService:Create(lf, TweenInfo.new(0.2), {Size = UDim2.new(1, 0, 0, math.min(#items * 24 + 8, 200))}):Play()
+            end
+        end
+        
+        return dropdownApi
     end
 
     local function addKeybind(options)
