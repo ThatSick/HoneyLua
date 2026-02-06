@@ -206,8 +206,8 @@ local function buildUI()
 
     local main = Instance.new("Frame")
     main.Name = "Main"
-    main.Size = UDim2.fromOffset(500, 360)
-    main.Position = UDim2.new(0.5, -250, 0.5, -180)
+    main.Size = UDim2.fromOffset(560, 380)
+    main.Position = UDim2.new(0.5, -280, 0.5, -190)
     main.BackgroundColor3 = Color3.fromRGB(255, 219, 145)
     main.BorderSizePixel = 0
     main.Parent = screenGui
@@ -245,130 +245,23 @@ local function buildUI()
     status.TextXAlignment = Enum.TextXAlignment.Left
     status.Parent = main
 
-    local configNameLabel = Instance.new("TextLabel")
-    configNameLabel.Size = UDim2.fromOffset(140, 22)
-    configNameLabel.Position = UDim2.fromOffset(12, 72)
-    configNameLabel.BackgroundTransparency = 1
-    configNameLabel.Font = Enum.Font.GothamSemibold
-    configNameLabel.TextSize = 14
-    configNameLabel.Text = "Config Name"
-    configNameLabel.TextColor3 = Color3.fromRGB(92, 55, 17)
-    configNameLabel.TextXAlignment = Enum.TextXAlignment.Left
-    configNameLabel.Parent = main
-
-    local configNameBox = Instance.new("TextBox")
-    configNameBox.Name = "ConfigName"
-    configNameBox.Size = UDim2.fromOffset(200, 26)
-    configNameBox.Position = UDim2.fromOffset(12, 96)
-    configNameBox.BackgroundColor3 = Color3.fromRGB(255, 237, 200)
-    configNameBox.BorderSizePixel = 0
-    configNameBox.Font = Enum.Font.Gotham
-    configNameBox.TextSize = 14
-    configNameBox.Text = currentConfigName
-    configNameBox.TextColor3 = Color3.fromRGB(92, 55, 17)
-    configNameBox.ClearTextOnFocus = false
-    configNameBox.Parent = main
-
-    local configCorner = Instance.new("UICorner")
-    configCorner.CornerRadius = UDim.new(0, 8)
-    configCorner.Parent = configNameBox
-
-    local autoLoadLabel = Instance.new("TextLabel")
-    autoLoadLabel.Size = UDim2.fromOffset(140, 22)
-    autoLoadLabel.Position = UDim2.fromOffset(230, 72)
-    autoLoadLabel.BackgroundTransparency = 1
-    autoLoadLabel.Font = Enum.Font.GothamSemibold
-    autoLoadLabel.TextSize = 14
-    autoLoadLabel.Text = "Auto Load"
-    autoLoadLabel.TextColor3 = Color3.fromRGB(92, 55, 17)
-    autoLoadLabel.TextXAlignment = Enum.TextXAlignment.Left
-    autoLoadLabel.Parent = main
-
-    local autoLoadToggle = Instance.new("TextButton")
-    autoLoadToggle.Name = "AutoLoad"
-    autoLoadToggle.Size = UDim2.fromOffset(80, 26)
-    autoLoadToggle.Position = UDim2.fromOffset(230, 96)
-    autoLoadToggle.BackgroundColor3 = Color3.fromRGB(255, 176, 68)
-    autoLoadToggle.BorderSizePixel = 0
-    autoLoadToggle.Font = Enum.Font.GothamBold
-    autoLoadToggle.TextSize = 14
-    autoLoadToggle.Text = settings.autoLoad and "ON" or "OFF"
-    autoLoadToggle.TextColor3 = Color3.fromRGB(92, 55, 17)
-    autoLoadToggle.Parent = main
-
-    local autoLoadCorner = Instance.new("UICorner")
-    autoLoadCorner.CornerRadius = UDim.new(0, 8)
-    autoLoadCorner.Parent = autoLoadToggle
-
-    local autoSaveLabel = Instance.new("TextLabel")
-    autoSaveLabel.Size = UDim2.fromOffset(140, 22)
-    autoSaveLabel.Position = UDim2.fromOffset(330, 72)
-    autoSaveLabel.BackgroundTransparency = 1
-    autoSaveLabel.Font = Enum.Font.GothamSemibold
-    autoSaveLabel.TextSize = 14
-    autoSaveLabel.Text = "Auto Save"
-    autoSaveLabel.TextColor3 = Color3.fromRGB(92, 55, 17)
-    autoSaveLabel.TextXAlignment = Enum.TextXAlignment.Left
-    autoSaveLabel.Parent = main
-
-    local autoSaveToggle = Instance.new("TextButton")
-    autoSaveToggle.Name = "AutoSave"
-    autoSaveToggle.Size = UDim2.fromOffset(80, 26)
-    autoSaveToggle.Position = UDim2.fromOffset(330, 96)
-    autoSaveToggle.BackgroundColor3 = Color3.fromRGB(255, 176, 68)
-    autoSaveToggle.BorderSizePixel = 0
-    autoSaveToggle.Font = Enum.Font.GothamBold
-    autoSaveToggle.TextSize = 14
-    autoSaveToggle.Text = settings.autoSave and "ON" or "OFF"
-    autoSaveToggle.TextColor3 = Color3.fromRGB(92, 55, 17)
-    autoSaveToggle.Parent = main
-
-    local autoSaveCorner = Instance.new("UICorner")
-    autoSaveCorner.CornerRadius = UDim.new(0, 8)
-    autoSaveCorner.Parent = autoSaveToggle
-
-    local function makeButton(name, text, x, y)
-        local button = Instance.new("TextButton")
-        button.Name = name
-        button.Size = UDim2.fromOffset(92, 30)
-        button.Position = UDim2.fromOffset(x, y)
-        button.BackgroundColor3 = Color3.fromRGB(255, 176, 68)
-        button.BorderSizePixel = 0
-        button.Font = Enum.Font.GothamBold
-        button.TextSize = 14
-        button.Text = text
-        button.TextColor3 = Color3.fromRGB(92, 55, 17)
-        button.Parent = main
-
-        local buttonCorner = Instance.new("UICorner")
-        buttonCorner.CornerRadius = UDim.new(0, 8)
-        buttonCorner.Parent = button
-
-        return button
-    end
-
-    local createButton = makeButton("Create", "Create", 12, 132)
-    local saveButton = makeButton("Save", "Save", 114, 132)
-    local loadButton = makeButton("Load", "Load", 216, 132)
-    local resetButton = makeButton("Reset", "Reset", 318, 132)
-
     local tabsHolder = Instance.new("Frame")
     tabsHolder.Name = "TabsHolder"
-    tabsHolder.Size = UDim2.new(1, -24, 0, 32)
-    tabsHolder.Position = UDim2.fromOffset(12, 176)
+    tabsHolder.Size = UDim2.fromOffset(120, 280)
+    tabsHolder.Position = UDim2.fromOffset(12, 80)
     tabsHolder.BackgroundTransparency = 1
     tabsHolder.Parent = main
 
     local tabsLayout = Instance.new("UIListLayout")
-    tabsLayout.FillDirection = Enum.FillDirection.Horizontal
+    tabsLayout.FillDirection = Enum.FillDirection.Vertical
     tabsLayout.SortOrder = Enum.SortOrder.LayoutOrder
     tabsLayout.Padding = UDim.new(0, 8)
     tabsLayout.Parent = tabsHolder
 
     local tabContent = Instance.new("Frame")
     tabContent.Name = "TabContent"
-    tabContent.Size = UDim2.new(1, -24, 1, -220)
-    tabContent.Position = UDim2.fromOffset(12, 216)
+    tabContent.Size = UDim2.new(1, -156, 1, -90)
+    tabContent.Position = UDim2.fromOffset(144, 80)
     tabContent.BackgroundTransparency = 1
     tabContent.Parent = main
 
@@ -378,13 +271,6 @@ local function buildUI()
         screenGui = screenGui,
         mainFrame = main,
         statusLabel = status,
-        configNameBox = configNameBox,
-        autoLoadToggle = autoLoadToggle,
-        autoSaveToggle = autoSaveToggle,
-        createButton = createButton,
-        saveButton = saveButton,
-        loadButton = loadButton,
-        resetButton = resetButton,
         tabsHolder = tabsHolder,
         tabContent = tabContent,
     }
@@ -434,7 +320,7 @@ local function createTab(tabName)
 
     local tabButton = Instance.new("TextButton")
     tabButton.Name = tabName .. "Tab"
-    tabButton.Size = UDim2.fromOffset(96, 28)
+    tabButton.Size = UDim2.fromOffset(120, 28)
     tabButton.BackgroundColor3 = Color3.fromRGB(255, 237, 200)
     tabButton.BorderSizePixel = 0
     tabButton.Font = Enum.Font.GothamBold
@@ -720,6 +606,7 @@ local function createTab(tabName)
         AddButton = addButton,
         AddSlider = addSlider,
         AddDropdown = addDropdown,
+        Container = container,
     }
 
     Tabs[tabName] = {
@@ -739,43 +626,181 @@ local function createTab(tabName)
     return api
 end
 
-UI.autoLoadToggle.MouseButton1Click:Connect(function()
-    toggleAuto("autoLoad")
-    UI.autoLoadToggle.Text = settings.autoLoad and "ON" or "OFF"
-    updateStatus("Auto load: " .. (settings.autoLoad and "ON" or "OFF"))
-end)
+local function buildSettingsTab(tabApi)
+    local container = tabApi.Container
 
-UI.autoSaveToggle.MouseButton1Click:Connect(function()
-    toggleAuto("autoSave")
-    UI.autoSaveToggle.Text = settings.autoSave and "ON" or "OFF"
-    updateStatus("Auto save: " .. (settings.autoSave and "ON" or "OFF"))
-end)
-
-UI.createButton.MouseButton1Click:Connect(function()
-    local name = UI.configNameBox.Text
-    if name == "" then
-        updateStatus("Enter a config name.")
-        return
+    local function addSectionLabel(text)
+        local label = Instance.new("TextLabel")
+        label.Size = UDim2.new(1, 0, 0, 20)
+        label.BackgroundTransparency = 1
+        label.Font = Enum.Font.GothamBold
+        label.TextSize = 15
+        label.TextColor3 = Color3.fromRGB(92, 55, 17)
+        label.TextXAlignment = Enum.TextXAlignment.Left
+        label.Text = text
+        label.Parent = container
+        return label
     end
-    createConfig(name)
-end)
 
-UI.saveButton.MouseButton1Click:Connect(function()
-    saveConfig()
-end)
+    local function addRow(labelText, control)
+        local row = Instance.new("Frame")
+        row.Size = UDim2.new(1, -20, 0, 28)
+        row.BackgroundTransparency = 1
+        row.Parent = container
 
-UI.loadButton.MouseButton1Click:Connect(function()
-    local name = UI.configNameBox.Text
-    if name == "" then
-        updateStatus("Enter a config name.")
-        return
+        local rowLayout = Instance.new("UIListLayout")
+        rowLayout.FillDirection = Enum.FillDirection.Horizontal
+        rowLayout.SortOrder = Enum.SortOrder.LayoutOrder
+        rowLayout.Padding = UDim.new(0, 12)
+        rowLayout.Parent = row
+
+        local label = Instance.new("TextLabel")
+        label.Size = UDim2.fromOffset(140, 28)
+        label.BackgroundTransparency = 1
+        label.Font = Enum.Font.GothamSemibold
+        label.TextSize = 14
+        label.TextColor3 = Color3.fromRGB(92, 55, 17)
+        label.TextXAlignment = Enum.TextXAlignment.Left
+        label.Text = labelText
+        label.Parent = row
+
+        control.Parent = row
+        return row
     end
-    loadConfig(name)
-end)
 
-UI.resetButton.MouseButton1Click:Connect(function()
-    resetCurrentConfig()
-end)
+    addSectionLabel("Config")
+
+    local configNameBox = Instance.new("TextBox")
+    configNameBox.Size = UDim2.fromOffset(220, 28)
+    configNameBox.BackgroundColor3 = Color3.fromRGB(255, 237, 200)
+    configNameBox.BorderSizePixel = 0
+    configNameBox.Font = Enum.Font.Gotham
+    configNameBox.TextSize = 14
+    configNameBox.TextColor3 = Color3.fromRGB(92, 55, 17)
+    configNameBox.ClearTextOnFocus = false
+    configNameBox.Text = currentConfigName
+
+    local configCorner = Instance.new("UICorner")
+    configCorner.CornerRadius = UDim.new(0, 8)
+    configCorner.Parent = configNameBox
+
+    addRow("Config Name", configNameBox)
+
+    local autoLoadToggle = Instance.new("TextButton")
+    autoLoadToggle.Size = UDim2.fromOffset(120, 28)
+    autoLoadToggle.BackgroundColor3 = Color3.fromRGB(255, 176, 68)
+    autoLoadToggle.BorderSizePixel = 0
+    autoLoadToggle.Font = Enum.Font.GothamBold
+    autoLoadToggle.TextSize = 14
+    autoLoadToggle.TextColor3 = Color3.fromRGB(92, 55, 17)
+    autoLoadToggle.Text = settings.autoLoad and "ON" or "OFF"
+
+    local autoLoadCorner = Instance.new("UICorner")
+    autoLoadCorner.CornerRadius = UDim.new(0, 8)
+    autoLoadCorner.Parent = autoLoadToggle
+
+    addRow("Auto Load", autoLoadToggle)
+
+    local autoSaveToggle = Instance.new("TextButton")
+    autoSaveToggle.Size = UDim2.fromOffset(120, 28)
+    autoSaveToggle.BackgroundColor3 = Color3.fromRGB(255, 176, 68)
+    autoSaveToggle.BorderSizePixel = 0
+    autoSaveToggle.Font = Enum.Font.GothamBold
+    autoSaveToggle.TextSize = 14
+    autoSaveToggle.TextColor3 = Color3.fromRGB(92, 55, 17)
+    autoSaveToggle.Text = settings.autoSave and "ON" or "OFF"
+
+    local autoSaveCorner = Instance.new("UICorner")
+    autoSaveCorner.CornerRadius = UDim.new(0, 8)
+    autoSaveCorner.Parent = autoSaveToggle
+
+    addRow("Auto Save", autoSaveToggle)
+
+    addSectionLabel("Actions")
+
+    local actionsRow = Instance.new("Frame")
+    actionsRow.Size = UDim2.new(1, -20, 0, 32)
+    actionsRow.BackgroundTransparency = 1
+    actionsRow.Parent = container
+
+    local actionsLayout = Instance.new("UIListLayout")
+    actionsLayout.FillDirection = Enum.FillDirection.Horizontal
+    actionsLayout.SortOrder = Enum.SortOrder.LayoutOrder
+    actionsLayout.Padding = UDim.new(0, 8)
+    actionsLayout.Parent = actionsRow
+
+    local function makeActionButton(text)
+        local button = Instance.new("TextButton")
+        button.Size = UDim2.fromOffset(90, 30)
+        button.BackgroundColor3 = Color3.fromRGB(255, 176, 68)
+        button.BorderSizePixel = 0
+        button.Font = Enum.Font.GothamBold
+        button.TextSize = 14
+        button.TextColor3 = Color3.fromRGB(92, 55, 17)
+        button.Text = text
+
+        local buttonCorner = Instance.new("UICorner")
+        buttonCorner.CornerRadius = UDim.new(0, 8)
+        buttonCorner.Parent = button
+
+        return button
+    end
+
+    local createButton = makeActionButton("Create")
+    local saveButton = makeActionButton("Save")
+    local loadButton = makeActionButton("Load")
+    local resetButton = makeActionButton("Reset")
+
+    createButton.Parent = actionsRow
+    saveButton.Parent = actionsRow
+    loadButton.Parent = actionsRow
+    resetButton.Parent = actionsRow
+
+    autoLoadToggle.MouseButton1Click:Connect(function()
+        toggleAuto("autoLoad")
+        autoLoadToggle.Text = settings.autoLoad and "ON" or "OFF"
+        updateStatus("Auto load: " .. (settings.autoLoad and "ON" or "OFF"))
+    end)
+
+    autoSaveToggle.MouseButton1Click:Connect(function()
+        toggleAuto("autoSave")
+        autoSaveToggle.Text = settings.autoSave and "ON" or "OFF"
+        updateStatus("Auto save: " .. (settings.autoSave and "ON" or "OFF"))
+    end)
+
+    createButton.MouseButton1Click:Connect(function()
+        local name = configNameBox.Text
+        if name == "" then
+            updateStatus("Enter a config name.")
+            return
+        end
+        createConfig(name)
+        configNameBox.Text = currentConfigName
+    end)
+
+    saveButton.MouseButton1Click:Connect(function()
+        saveConfig()
+    end)
+
+    loadButton.MouseButton1Click:Connect(function()
+        local name = configNameBox.Text
+        if name == "" then
+            updateStatus("Enter a config name.")
+            return
+        end
+        loadConfig(name)
+        configNameBox.Text = currentConfigName
+    end)
+
+    resetButton.MouseButton1Click:Connect(function()
+        resetCurrentConfig()
+    end)
+
+    UI.configNameBox = configNameBox
+end
+
+local settingsTab = createTab("Settings")
+buildSettingsTab(settingsTab)
 
 if settings.autoLoad and FS.isfile(configPath(currentConfigName)) then
     loadConfig(currentConfigName)
@@ -801,6 +826,7 @@ getgenv().HoneyLuaUI = {
     ResetConfig = resetCurrentConfig,
     CreateConfig = createConfig,
     ListConfigs = listConfigs,
+    SetActiveTab = setTabActive,
     UI = UI,
 }
 

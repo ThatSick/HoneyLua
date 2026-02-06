@@ -27,7 +27,7 @@
     }
 
     .panel {
-      width: 560px;
+      width: 600px;
       background: var(--honey-amber);
       border: 2px solid var(--honey-dark);
       border-radius: 20px;
@@ -68,73 +68,73 @@
       margin-bottom: 16px;
     }
 
-    .top-row {
+    .layout {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      margin-bottom: 16px;
+      grid-template-columns: 120px 1fr;
+      gap: 16px;
     }
 
-    .field {
+    .tabs {
       display: grid;
-      gap: 6px;
-    }
-
-    .field label {
-      font-weight: 600;
-      font-size: 13px;
-    }
-
-    input {
-      border: none;
-      border-radius: 10px;
-      padding: 10px 12px;
-      background: var(--honey-light);
-      color: var(--honey-text);
-      font-size: 14px;
-    }
-
-    .actions {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
       gap: 10px;
-      margin-bottom: 14px;
     }
 
-    .actions button,
-    .tab,
-    .pill {
+    .tab {
       border: none;
       border-radius: 10px;
-      background: var(--honey);
+      background: var(--honey-light);
       color: var(--honey-text);
       font-weight: 700;
       padding: 10px;
-      cursor: pointer;
       font-size: 13px;
       text-align: center;
     }
 
-    .tabs {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 12px;
-    }
-
-    .tab.inactive {
-      background: var(--honey-light);
+    .tab.active {
+      background: var(--honey);
     }
 
     .content {
       display: grid;
-      gap: 10px;
+      gap: 12px;
     }
 
-    .control {
+    .section-title {
+      font-weight: 700;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .row {
       display: grid;
       grid-template-columns: 140px 1fr;
       gap: 12px;
       align-items: center;
+    }
+
+    .pill,
+    input,
+    button {
+      border: none;
+      border-radius: 10px;
+      background: var(--honey-light);
+      color: var(--honey-text);
+      font-weight: 600;
+      padding: 8px 12px;
+      font-size: 13px;
+    }
+
+    .pill,
+    button {
+      background: var(--honey);
+      text-align: center;
+      font-weight: 700;
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
     }
 
     .slider {
@@ -174,50 +174,54 @@
     <h1>HoneyLua Config Manager</h1>
     <div class="status">Ready • Auto load enabled • Auto save enabled</div>
 
-    <div class="top-row">
-      <div class="field">
-        <label>Config Name</label>
-        <input value="default" />
+    <div class="layout">
+      <div class="tabs">
+        <div class="tab active">Settings</div>
+        <div class="tab">Main</div>
+        <div class="tab">Visual</div>
+        <div class="tab">Misc</div>
       </div>
-      <div class="field">
-        <label>Auto Load</label>
-        <div class="pill">ON</div>
-      </div>
-      <div class="field">
-        <label>Auto Save</label>
-        <div class="pill">ON</div>
-      </div>
-    </div>
 
-    <div class="actions">
-      <button>Create</button>
-      <button>Save</button>
-      <button>Load</button>
-      <button>Reset</button>
-    </div>
+      <div class="content">
+        <div class="section-title">Config</div>
+        <div class="row">
+          <div>Config Name</div>
+          <input value="default" />
+        </div>
+        <div class="row">
+          <div>Auto Load</div>
+          <div class="pill">ON</div>
+        </div>
+        <div class="row">
+          <div>Auto Save</div>
+          <div class="pill">ON</div>
+        </div>
 
-    <div class="tabs">
-      <div class="tab">Main</div>
-      <div class="tab inactive">Visual</div>
-      <div class="tab inactive">Misc</div>
-    </div>
+        <div class="section-title">Actions</div>
+        <div class="actions">
+          <button>Create</button>
+          <button>Save</button>
+          <button>Load</button>
+          <button>Reset</button>
+        </div>
 
-    <div class="content">
-      <div class="control">
-        <div>Auto Sprint</div>
-        <div class="pill">ON</div>
-      </div>
-      <div class="control">
-        <div>Quick Farm</div>
-        <div class="pill">RUN</div>
-      </div>
-      <div class="control">
-        <div>Speed</div>
-        <div class="slider"></div>
-      </div>
-      <div class="control">
-        <div>Target Mode</div>
-        <div class="dropdown">Nearest</div>
+        <div class="section-title">Demo Controls</div>
+        <div class="row">
+          <div>Auto Sprint</div>
+          <div class="pill">ON</div>
+        </div>
+        <div class="row">
+          <div>Quick Farm</div>
+          <div class="pill">RUN</div>
+        </div>
+        <div class="row">
+          <div>Speed</div>
+          <div class="slider"></div>
+        </div>
+        <div class="row">
+          <div>Target Mode</div>
+          <div class="dropdown">Nearest</div>
+        </div>
       </div>
     </div>
   </div>
