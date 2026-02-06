@@ -767,3 +767,5 @@ end
 getgenv().HoneyLuaUI = {CreateTab = createTab, SaveConfig = saveConfig, LoadConfig = loadConfig, ResetConfig = resetCurrentConfig, CreateConfig = createConfig, ListConfigs = listConfigs, SetActiveTab = setTabActive, UpdateSection = updateSection, ShowPrompt = showPrompt, UI = UI}
 
 if RunService:IsStudio() then warn("HoneyLua UI loaded in Studio. Use an executor for file APIs.") end
+
+return getgenv().HoneyLuaUI
