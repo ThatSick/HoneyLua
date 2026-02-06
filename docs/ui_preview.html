@@ -5,11 +5,12 @@
   <title>HoneyLua UI Preview</title>
   <style>
     :root {
-      --honey: #ffb044;
+      --honey: #ffba5a;
       --honey-dark: #b77c25;
       --honey-light: #ffedc8;
       --honey-amber: #ffdb91;
       --honey-text: #5c3711;
+      --honey-outline: #ecbf7a;
     }
 
     * {
@@ -27,7 +28,7 @@
     }
 
     .panel {
-      width: 600px;
+      width: 620px;
       background: var(--honey-amber);
       border: 2px solid var(--honey-dark);
       border-radius: 20px;
@@ -52,20 +53,27 @@
       z-index: 0;
     }
 
+    .panel::after {
+      content: "HONEY HONEY HONEY HONEY HONEY HONEY";
+      position: absolute;
+      inset: -80px;
+      color: rgba(255, 200, 120, 0.25);
+      font-size: 26px;
+      letter-spacing: 6px;
+      font-weight: 700;
+      animation: drift 12s ease-in-out infinite alternate;
+      white-space: pre-wrap;
+      z-index: 0;
+    }
+
+    @keyframes drift {
+      from { transform: translate(0, 0); }
+      to { transform: translate(-20px, 18px); }
+    }
+
     .panel > * {
       position: relative;
       z-index: 1;
-    }
-
-    h1 {
-      margin: 0 0 6px;
-      font-size: 22px;
-    }
-
-    .status {
-      font-size: 14px;
-      color: #784f1c;
-      margin-bottom: 16px;
     }
 
     .layout {
@@ -80,23 +88,35 @@
     }
 
     .tab {
-      border: none;
       border-radius: 10px;
       background: var(--honey-light);
-      color: var(--honey-text);
+      color: #7c521e;
       font-weight: 700;
       padding: 10px;
       font-size: 13px;
       text-align: center;
+      border: 1px solid var(--honey-outline);
     }
 
     .tab.active {
       background: var(--honey);
+      color: var(--honey-text);
     }
 
     .content {
       display: grid;
       gap: 12px;
+    }
+
+    .header {
+      font-weight: 700;
+      font-size: 18px;
+    }
+
+    .status {
+      font-size: 13px;
+      color: #784f1c;
+      margin-bottom: 6px;
     }
 
     .section-title {
@@ -107,7 +127,7 @@
 
     .row {
       display: grid;
-      grid-template-columns: 140px 1fr;
+      grid-template-columns: 150px 1fr;
       gap: 12px;
       align-items: center;
     }
@@ -115,13 +135,13 @@
     .pill,
     input,
     button {
-      border: none;
       border-radius: 10px;
       background: var(--honey-light);
       color: var(--honey-text);
       font-weight: 600;
       padding: 8px 12px;
       font-size: 13px;
+      border: 1px solid var(--honey-outline);
     }
 
     .pill,
@@ -142,6 +162,8 @@
       border-radius: 999px;
       background: var(--honey-light);
       position: relative;
+      border: 1px solid var(--honey-outline);
+      overflow: hidden;
     }
 
     .slider::after {
@@ -157,6 +179,7 @@
       border-radius: 10px;
       padding: 8px 10px;
       font-size: 13px;
+      border: 1px solid var(--honey-outline);
     }
 
     .tag {
@@ -165,24 +188,25 @@
       letter-spacing: 0.12em;
       font-weight: 700;
       color: #c17b1a;
+      margin-bottom: 4px;
     }
   </style>
 </head>
 <body>
   <div class="panel">
-    <div class="tag">Honey Theme</div>
-    <h1>HoneyLua Config Manager</h1>
-    <div class="status">Ready • Auto load enabled • Auto save enabled</div>
-
     <div class="layout">
       <div class="tabs">
-        <div class="tab active">Settings</div>
         <div class="tab">Main</div>
         <div class="tab">Visual</div>
         <div class="tab">Misc</div>
+        <div class="tab active">Settings</div>
       </div>
 
       <div class="content">
+        <div class="tag">Honey Theme</div>
+        <div class="header">Config Manager</div>
+        <div class="status">Loaded config: default</div>
+
         <div class="section-title">Config</div>
         <div class="row">
           <div>Config Name</div>

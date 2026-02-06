@@ -5,6 +5,7 @@ local Players = game:GetService("Players")
 local HttpService = game:GetService("HttpService")
 local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
 
 local localPlayer = Players.LocalPlayer
 
@@ -44,6 +45,8 @@ local DEFAULT_SETTINGS = {
     autoSave = true,
     lastConfig = "default",
     autoSaveInterval = 30,
+    uiWidth = 560,
+    uiHeight = 380,
 }
 
 local function decodeJson(payload, fallback)
@@ -192,7 +195,8 @@ end
 local function setTabActive(tabName)
     for name, tab in pairs(Tabs) do
         local isActive = name == tabName
-        tab.button.BackgroundColor3 = isActive and Color3.fromRGB(255, 176, 68) or Color3.fromRGB(255, 237, 200)
+        tab.button.BackgroundColor3 = isActive and Color3.fromRGB(255, 186, 90) or Color3.fromRGB(255, 237, 200)
+        tab.button.TextColor3 = isActive and Color3.fromRGB(92, 55, 17) or Color3.fromRGB(124, 82, 30)
         tab.container.Visible = isActive
     end
     ActiveTab = tabName
@@ -206,8 +210,8 @@ local function buildUI()
 
     local main = Instance.new("Frame")
     main.Name = "Main"
-    main.Size = UDim2.fromOffset(560, 380)
-    main.Position = UDim2.new(0.5, -280, 0.5, -190)
+    main.Size = UDim2.fromOffset(settings.uiWidth or 560, settings.uiHeight or 380)
+    main.Position = UDim2.new(0.5, -(settings.uiWidth or 560) / 2, 0.5, -(settings.uiHeight or 380) / 2)
     main.BackgroundColor3 = Color3.fromRGB(255, 219, 145)
     main.BorderSizePixel = 0
     main.Parent = screenGui
@@ -221,34 +225,48 @@ local function buildUI()
     stroke.Thickness = 2
     stroke.Parent = main
 
-    local title = Instance.new("TextLabel")
-    title.Name = "Title"
-    title.Size = UDim2.new(1, -24, 0, 32)
-    title.Position = UDim2.fromOffset(12, 10)
-    title.BackgroundTransparency = 1
-    title.Font = Enum.Font.GothamBold
-    title.TextSize = 22
-    title.Text = "HoneyLua Config Manager"
-    title.TextColor3 = Color3.fromRGB(92, 55, 17)
-    title.TextXAlignment = Enum.TextXAlignment.Left
-    title.Parent = main
+    local honeyPattern = Instance.new("TextLabel")
+    honeyPattern.Name = "HoneyPattern"
+    honeyPattern.Size = UDim2.new(2, 0, 2, 0)
+    honeyPattern.Position = UDim2.fromOffset(-200, -160)
+    honeyPattern.BackgroundTransparency = 1
+    honeyPattern.Font = Enum.Font.GothamBold
+    honeyPattern.TextSize = 24
+    honeyPattern.TextColor3 = Color3.fromRGB(255, 200, 120)
+    honeyPattern.TextTransparency = 0.86
+    honeyPattern.Text = ("HONEY "):rep(60)
+    honeyPattern.TextWrapped = true
+    honeyPattern.Parent = main
 
-    local status = Instance.new("TextLabel")
-    status.Name = "Status"
-    status.Size = UDim2.new(1, -24, 0, 20)
-    status.Position = UDim2.fromOffset(12, 44)
-    status.BackgroundTransparency = 1
-    status.Font = Enum.Font.Gotham
-    status.TextSize = 14
-    status.Text = "Ready."
-    status.TextColor3 = Color3.fromRGB(120, 79, 28)
-    status.TextXAlignment = Enum.TextXAlignment.Left
-    status.Parent = main
+    local patternTween = TweenService:Create(
+        honeyPattern,
+        TweenInfo.new(18, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true),
+        { Position = UDim2.fromOffset(-240, -120) }
+    )
+    patternTween:Play()
+
+    local header = Instance.new("Frame")
+    header.Name = "Header"
+    header.Size = UDim2.new(1, -24, 0, 26)
+    header.Position = UDim2.fromOffset(12, 12)
+    header.BackgroundTransparency = 1
+    header.Parent = main
+
+    local headerTitle = Instance.new("TextLabel")
+    headerTitle.Name = "HeaderTitle"
+    headerTitle.Size = UDim2.new(1, 0, 1, 0)
+    headerTitle.BackgroundTransparency = 1
+    headerTitle.Font = Enum.Font.GothamBold
+    headerTitle.TextSize = 20
+    headerTitle.Text = "HoneyLua"
+    headerTitle.TextColor3 = Color3.fromRGB(92, 55, 17)
+    headerTitle.TextXAlignment = Enum.TextXAlignment.Left
+    headerTitle.Parent = header
 
     local tabsHolder = Instance.new("Frame")
     tabsHolder.Name = "TabsHolder"
-    tabsHolder.Size = UDim2.fromOffset(120, 280)
-    tabsHolder.Position = UDim2.fromOffset(12, 80)
+    tabsHolder.Size = UDim2.fromOffset(120, 290)
+    tabsHolder.Position = UDim2.fromOffset(12, 54)
     tabsHolder.BackgroundTransparency = 1
     tabsHolder.Parent = main
 
@@ -260,8 +278,8 @@ local function buildUI()
 
     local tabContent = Instance.new("Frame")
     tabContent.Name = "TabContent"
-    tabContent.Size = UDim2.new(1, -156, 1, -90)
-    tabContent.Position = UDim2.fromOffset(144, 80)
+    tabContent.Size = UDim2.new(1, -156, 1, -70)
+    tabContent.Position = UDim2.fromOffset(144, 54)
     tabContent.BackgroundTransparency = 1
     tabContent.Parent = main
 
@@ -270,7 +288,7 @@ local function buildUI()
     return {
         screenGui = screenGui,
         mainFrame = main,
-        statusLabel = status,
+        statusLabel = nil,
         tabsHolder = tabsHolder,
         tabContent = tabContent,
     }
@@ -313,25 +331,31 @@ end
 
 enableDragging(UI.mainFrame, UI.mainFrame)
 
-local function createTab(tabName)
+local function createTab(tabName, layoutOrder)
     if Tabs[tabName] then
         return Tabs[tabName].api
     end
 
     local tabButton = Instance.new("TextButton")
     tabButton.Name = tabName .. "Tab"
-    tabButton.Size = UDim2.fromOffset(120, 28)
+    tabButton.Size = UDim2.fromOffset(120, 30)
     tabButton.BackgroundColor3 = Color3.fromRGB(255, 237, 200)
     tabButton.BorderSizePixel = 0
     tabButton.Font = Enum.Font.GothamBold
     tabButton.TextSize = 14
     tabButton.Text = tabName
-    tabButton.TextColor3 = Color3.fromRGB(92, 55, 17)
+    tabButton.TextColor3 = Color3.fromRGB(124, 82, 30)
+    tabButton.LayoutOrder = layoutOrder or 1
     tabButton.Parent = UI.tabsHolder
 
     local tabCorner = Instance.new("UICorner")
-    tabCorner.CornerRadius = UDim.new(0, 8)
+    tabCorner.CornerRadius = UDim.new(0, 10)
     tabCorner.Parent = tabButton
+
+    local tabStroke = Instance.new("UIStroke")
+    tabStroke.Color = Color3.fromRGB(236, 191, 122)
+    tabStroke.Thickness = 1
+    tabStroke.Parent = tabButton
 
     local container = Instance.new("Frame")
     container.Name = tabName .. "Container"
@@ -360,17 +384,22 @@ local function createTab(tabName)
     local function addToggle(options)
         local label = makeLabel(options.label)
         local toggle = Instance.new("TextButton")
-        toggle.Size = UDim2.fromOffset(120, 28)
-        toggle.BackgroundColor3 = Color3.fromRGB(255, 176, 68)
+        toggle.Size = UDim2.fromOffset(120, 30)
+        toggle.BackgroundColor3 = Color3.fromRGB(255, 186, 90)
         toggle.BorderSizePixel = 0
         toggle.Font = Enum.Font.GothamBold
-        toggle.TextSize = 14
+        toggle.TextSize = 13
         toggle.TextColor3 = Color3.fromRGB(92, 55, 17)
         toggle.Parent = container
 
         local toggleCorner = Instance.new("UICorner")
-        toggleCorner.CornerRadius = UDim.new(0, 8)
+        toggleCorner.CornerRadius = UDim.new(0, 10)
         toggleCorner.Parent = toggle
+
+        local toggleStroke = Instance.new("UIStroke")
+        toggleStroke.Color = Color3.fromRGB(236, 191, 122)
+        toggleStroke.Thickness = 1
+        toggleStroke.Parent = toggle
 
         local state = options.default or false
         local function applyState(value)
@@ -401,18 +430,23 @@ local function createTab(tabName)
     local function addButton(options)
         local label = makeLabel(options.label)
         local button = Instance.new("TextButton")
-        button.Size = UDim2.fromOffset(140, 28)
-        button.BackgroundColor3 = Color3.fromRGB(255, 176, 68)
+        button.Size = UDim2.fromOffset(140, 30)
+        button.BackgroundColor3 = Color3.fromRGB(255, 186, 90)
         button.BorderSizePixel = 0
         button.Font = Enum.Font.GothamBold
-        button.TextSize = 14
+        button.TextSize = 13
         button.TextColor3 = Color3.fromRGB(92, 55, 17)
         button.Text = options.text or "Run"
         button.Parent = container
 
         local buttonCorner = Instance.new("UICorner")
-        buttonCorner.CornerRadius = UDim.new(0, 8)
+        buttonCorner.CornerRadius = UDim.new(0, 10)
         buttonCorner.Parent = button
+
+        local buttonStroke = Instance.new("UIStroke")
+        buttonStroke.Color = Color3.fromRGB(236, 191, 122)
+        buttonStroke.Thickness = 1
+        buttonStroke.Parent = button
 
         button.MouseButton1Click:Connect(function()
             if options.onClick then
@@ -429,31 +463,36 @@ local function createTab(tabName)
     local function addSlider(options)
         local label = makeLabel(options.label)
         local sliderFrame = Instance.new("Frame")
-        sliderFrame.Size = UDim2.new(1, -40, 0, 28)
+        sliderFrame.Size = UDim2.new(1, -60, 0, 30)
         sliderFrame.BackgroundColor3 = Color3.fromRGB(255, 237, 200)
         sliderFrame.BorderSizePixel = 0
         sliderFrame.Parent = container
 
         local sliderCorner = Instance.new("UICorner")
-        sliderCorner.CornerRadius = UDim.new(0, 8)
+        sliderCorner.CornerRadius = UDim.new(0, 10)
         sliderCorner.Parent = sliderFrame
+
+        local sliderStroke = Instance.new("UIStroke")
+        sliderStroke.Color = Color3.fromRGB(236, 191, 122)
+        sliderStroke.Thickness = 1
+        sliderStroke.Parent = sliderFrame
 
         local fill = Instance.new("Frame")
         fill.Size = UDim2.new(0, 0, 1, 0)
-        fill.BackgroundColor3 = Color3.fromRGB(255, 176, 68)
+        fill.BackgroundColor3 = Color3.fromRGB(255, 186, 90)
         fill.BorderSizePixel = 0
         fill.Parent = sliderFrame
 
         local fillCorner = Instance.new("UICorner")
-        fillCorner.CornerRadius = UDim.new(0, 8)
+        fillCorner.CornerRadius = UDim.new(0, 10)
         fillCorner.Parent = fill
 
         local valueLabel = Instance.new("TextLabel")
-        valueLabel.Size = UDim2.fromOffset(40, 28)
+        valueLabel.Size = UDim2.fromOffset(48, 30)
         valueLabel.Position = UDim2.new(1, 8, 0, 0)
         valueLabel.BackgroundTransparency = 1
         valueLabel.Font = Enum.Font.GothamBold
-        valueLabel.TextSize = 14
+        valueLabel.TextSize = 13
         valueLabel.TextColor3 = Color3.fromRGB(92, 55, 17)
         valueLabel.Parent = sliderFrame
 
@@ -474,31 +513,29 @@ local function createTab(tabName)
             end
         end
 
+        local dragging = false
+
+        local function updateFromInput(inputPosition)
+            local relative = math.clamp((inputPosition - sliderFrame.AbsolutePosition.X) / sliderFrame.AbsoluteSize.X, 0, 1)
+            setValue(min + (max - min) * relative)
+        end
+
         sliderFrame.InputBegan:Connect(function(input)
             if input.UserInputType == Enum.UserInputType.MouseButton1 then
-                local mouse = localPlayer:GetMouse()
-                local function update()
-                    local relative = math.clamp((mouse.X - sliderFrame.AbsolutePosition.X) / sliderFrame.AbsoluteSize.X, 0, 1)
-                    setValue(min + (max - min) * relative)
-                end
-                update()
-                local moveConn
-                moveConn = UserInputService.InputChanged:Connect(function(moveInput)
-                    if moveInput.UserInputType == Enum.UserInputType.MouseMovement then
-                        update()
-                    end
-                end)
-                local endConn
-                endConn = UserInputService.InputEnded:Connect(function(endInput)
-                    if endInput.UserInputType == Enum.UserInputType.MouseButton1 then
-                        if moveConn then
-                            moveConn:Disconnect()
-                        end
-                        if endConn then
-                            endConn:Disconnect()
-                        end
-                    end
-                end)
+                dragging = true
+                updateFromInput(input.Position.X)
+            end
+        end)
+
+        sliderFrame.InputEnded:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                dragging = false
+            end
+        end)
+
+        UserInputService.InputChanged:Connect(function(input)
+            if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+                updateFromInput(input.Position.X)
             end
         end)
 
@@ -519,28 +556,38 @@ local function createTab(tabName)
     local function addDropdown(options)
         local label = makeLabel(options.label)
         local dropdown = Instance.new("TextButton")
-        dropdown.Size = UDim2.fromOffset(180, 28)
+        dropdown.Size = UDim2.fromOffset(190, 30)
         dropdown.BackgroundColor3 = Color3.fromRGB(255, 237, 200)
         dropdown.BorderSizePixel = 0
         dropdown.Font = Enum.Font.Gotham
-        dropdown.TextSize = 14
+        dropdown.TextSize = 13
         dropdown.TextColor3 = Color3.fromRGB(92, 55, 17)
         dropdown.Parent = container
 
         local dropdownCorner = Instance.new("UICorner")
-        dropdownCorner.CornerRadius = UDim.new(0, 8)
+        dropdownCorner.CornerRadius = UDim.new(0, 10)
         dropdownCorner.Parent = dropdown
 
+        local dropdownStroke = Instance.new("UIStroke")
+        dropdownStroke.Color = Color3.fromRGB(236, 191, 122)
+        dropdownStroke.Thickness = 1
+        dropdownStroke.Parent = dropdown
+
         local listFrame = Instance.new("Frame")
-        listFrame.Size = UDim2.fromOffset(180, 0)
+        listFrame.Size = UDim2.fromOffset(190, 0)
         listFrame.BackgroundColor3 = Color3.fromRGB(255, 237, 200)
         listFrame.BorderSizePixel = 0
         listFrame.Visible = false
         listFrame.Parent = container
 
         local listCorner = Instance.new("UICorner")
-        listCorner.CornerRadius = UDim.new(0, 8)
+        listCorner.CornerRadius = UDim.new(0, 10)
         listCorner.Parent = listFrame
+
+        local listStroke = Instance.new("UIStroke")
+        listStroke.Color = Color3.fromRGB(236, 191, 122)
+        listStroke.Thickness = 1
+        listStroke.Parent = listFrame
 
         local listLayout = Instance.new("UIListLayout")
         listLayout.Padding = UDim.new(0, 4)
@@ -563,17 +610,17 @@ local function createTab(tabName)
 
         for _, item in ipairs(optionsList) do
             local itemButton = Instance.new("TextButton")
-            itemButton.Size = UDim2.fromOffset(170, 24)
-            itemButton.BackgroundColor3 = Color3.fromRGB(255, 176, 68)
+            itemButton.Size = UDim2.fromOffset(178, 26)
+            itemButton.BackgroundColor3 = Color3.fromRGB(255, 186, 90)
             itemButton.BorderSizePixel = 0
             itemButton.Font = Enum.Font.Gotham
-            itemButton.TextSize = 13
+            itemButton.TextSize = 12
             itemButton.TextColor3 = Color3.fromRGB(92, 55, 17)
             itemButton.Text = tostring(item)
             itemButton.Parent = listFrame
 
             local itemCorner = Instance.new("UICorner")
-            itemCorner.CornerRadius = UDim.new(0, 6)
+            itemCorner.CornerRadius = UDim.new(0, 8)
             itemCorner.Parent = itemButton
 
             itemButton.MouseButton1Click:Connect(function()
@@ -583,7 +630,7 @@ local function createTab(tabName)
         end
 
         listLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-            listFrame.Size = UDim2.fromOffset(180, listLayout.AbsoluteContentSize.Y + 8)
+            listFrame.Size = UDim2.fromOffset(190, listLayout.AbsoluteContentSize.Y + 8)
         end)
 
         selectItem(selected)
@@ -644,7 +691,7 @@ local function buildSettingsTab(tabApi)
 
     local function addRow(labelText, control)
         local row = Instance.new("Frame")
-        row.Size = UDim2.new(1, -20, 0, 28)
+        row.Size = UDim2.new(1, -20, 0, 30)
         row.BackgroundTransparency = 1
         row.Parent = container
 
@@ -655,7 +702,7 @@ local function buildSettingsTab(tabApi)
         rowLayout.Parent = row
 
         local label = Instance.new("TextLabel")
-        label.Size = UDim2.fromOffset(140, 28)
+        label.Size = UDim2.fromOffset(150, 30)
         label.BackgroundTransparency = 1
         label.Font = Enum.Font.GothamSemibold
         label.TextSize = 14
@@ -668,51 +715,88 @@ local function buildSettingsTab(tabApi)
         return row
     end
 
+    local configTitle = Instance.new("TextLabel")
+    configTitle.Size = UDim2.new(1, 0, 0, 24)
+    configTitle.BackgroundTransparency = 1
+    configTitle.Font = Enum.Font.GothamBold
+    configTitle.TextSize = 18
+    configTitle.TextColor3 = Color3.fromRGB(92, 55, 17)
+    configTitle.TextXAlignment = Enum.TextXAlignment.Left
+    configTitle.Text = "Config Manager"
+    configTitle.Parent = container
+
+    local statusLabel = Instance.new("TextLabel")
+    statusLabel.Size = UDim2.new(1, 0, 0, 20)
+    statusLabel.BackgroundTransparency = 1
+    statusLabel.Font = Enum.Font.Gotham
+    statusLabel.TextSize = 13
+    statusLabel.TextColor3 = Color3.fromRGB(120, 79, 28)
+    statusLabel.TextXAlignment = Enum.TextXAlignment.Left
+    statusLabel.Text = "Loaded config: " .. currentConfigName
+    statusLabel.Parent = container
+
+    UI.statusLabel = statusLabel
+
     addSectionLabel("Config")
 
     local configNameBox = Instance.new("TextBox")
-    configNameBox.Size = UDim2.fromOffset(220, 28)
+    configNameBox.Size = UDim2.fromOffset(220, 30)
     configNameBox.BackgroundColor3 = Color3.fromRGB(255, 237, 200)
     configNameBox.BorderSizePixel = 0
     configNameBox.Font = Enum.Font.Gotham
-    configNameBox.TextSize = 14
+    configNameBox.TextSize = 13
     configNameBox.TextColor3 = Color3.fromRGB(92, 55, 17)
     configNameBox.ClearTextOnFocus = false
     configNameBox.Text = currentConfigName
 
     local configCorner = Instance.new("UICorner")
-    configCorner.CornerRadius = UDim.new(0, 8)
+    configCorner.CornerRadius = UDim.new(0, 10)
     configCorner.Parent = configNameBox
+
+    local configStroke = Instance.new("UIStroke")
+    configStroke.Color = Color3.fromRGB(236, 191, 122)
+    configStroke.Thickness = 1
+    configStroke.Parent = configNameBox
 
     addRow("Config Name", configNameBox)
 
     local autoLoadToggle = Instance.new("TextButton")
-    autoLoadToggle.Size = UDim2.fromOffset(120, 28)
-    autoLoadToggle.BackgroundColor3 = Color3.fromRGB(255, 176, 68)
+    autoLoadToggle.Size = UDim2.fromOffset(120, 30)
+    autoLoadToggle.BackgroundColor3 = Color3.fromRGB(255, 186, 90)
     autoLoadToggle.BorderSizePixel = 0
     autoLoadToggle.Font = Enum.Font.GothamBold
-    autoLoadToggle.TextSize = 14
+    autoLoadToggle.TextSize = 13
     autoLoadToggle.TextColor3 = Color3.fromRGB(92, 55, 17)
     autoLoadToggle.Text = settings.autoLoad and "ON" or "OFF"
 
     local autoLoadCorner = Instance.new("UICorner")
-    autoLoadCorner.CornerRadius = UDim.new(0, 8)
+    autoLoadCorner.CornerRadius = UDim.new(0, 10)
     autoLoadCorner.Parent = autoLoadToggle
+
+    local autoLoadStroke = Instance.new("UIStroke")
+    autoLoadStroke.Color = Color3.fromRGB(236, 191, 122)
+    autoLoadStroke.Thickness = 1
+    autoLoadStroke.Parent = autoLoadToggle
 
     addRow("Auto Load", autoLoadToggle)
 
     local autoSaveToggle = Instance.new("TextButton")
-    autoSaveToggle.Size = UDim2.fromOffset(120, 28)
-    autoSaveToggle.BackgroundColor3 = Color3.fromRGB(255, 176, 68)
+    autoSaveToggle.Size = UDim2.fromOffset(120, 30)
+    autoSaveToggle.BackgroundColor3 = Color3.fromRGB(255, 186, 90)
     autoSaveToggle.BorderSizePixel = 0
     autoSaveToggle.Font = Enum.Font.GothamBold
-    autoSaveToggle.TextSize = 14
+    autoSaveToggle.TextSize = 13
     autoSaveToggle.TextColor3 = Color3.fromRGB(92, 55, 17)
     autoSaveToggle.Text = settings.autoSave and "ON" or "OFF"
 
     local autoSaveCorner = Instance.new("UICorner")
-    autoSaveCorner.CornerRadius = UDim.new(0, 8)
+    autoSaveCorner.CornerRadius = UDim.new(0, 10)
     autoSaveCorner.Parent = autoSaveToggle
+
+    local autoSaveStroke = Instance.new("UIStroke")
+    autoSaveStroke.Color = Color3.fromRGB(236, 191, 122)
+    autoSaveStroke.Thickness = 1
+    autoSaveStroke.Parent = autoSaveToggle
 
     addRow("Auto Save", autoSaveToggle)
 
@@ -732,16 +816,21 @@ local function buildSettingsTab(tabApi)
     local function makeActionButton(text)
         local button = Instance.new("TextButton")
         button.Size = UDim2.fromOffset(90, 30)
-        button.BackgroundColor3 = Color3.fromRGB(255, 176, 68)
+        button.BackgroundColor3 = Color3.fromRGB(255, 186, 90)
         button.BorderSizePixel = 0
         button.Font = Enum.Font.GothamBold
-        button.TextSize = 14
+        button.TextSize = 13
         button.TextColor3 = Color3.fromRGB(92, 55, 17)
         button.Text = text
 
         local buttonCorner = Instance.new("UICorner")
-        buttonCorner.CornerRadius = UDim.new(0, 8)
+        buttonCorner.CornerRadius = UDim.new(0, 10)
         buttonCorner.Parent = button
+
+        local buttonStroke = Instance.new("UIStroke")
+        buttonStroke.Color = Color3.fromRGB(236, 191, 122)
+        buttonStroke.Thickness = 1
+        buttonStroke.Parent = button
 
         return button
     end
@@ -799,7 +888,7 @@ local function buildSettingsTab(tabApi)
     UI.configNameBox = configNameBox
 end
 
-local settingsTab = createTab("Settings")
+local settingsTab = createTab("Settings", 999)
 buildSettingsTab(settingsTab)
 
 if settings.autoLoad and FS.isfile(configPath(currentConfigName)) then
@@ -819,6 +908,17 @@ if settings.autoSave then
     end)
 end
 
+local function setUISize(width, height)
+    local clampedWidth = math.clamp(width or settings.uiWidth or 560, 420, 900)
+    local clampedHeight = math.clamp(height or settings.uiHeight or 380, 280, 700)
+    settings.uiWidth = clampedWidth
+    settings.uiHeight = clampedHeight
+    syncSettings()
+    if UI and UI.mainFrame then
+        UI.mainFrame.Size = UDim2.fromOffset(clampedWidth, clampedHeight)
+    end
+end
+
 getgenv().HoneyLuaUI = {
     CreateTab = createTab,
     SaveConfig = saveConfig,
@@ -827,6 +927,7 @@ getgenv().HoneyLuaUI = {
     CreateConfig = createConfig,
     ListConfigs = listConfigs,
     SetActiveTab = setTabActive,
+    SetSize = setUISize,
     UI = UI,
 }
 
