@@ -27,7 +27,7 @@
     }
 
     .panel {
-      width: 520px;
+      width: 560px;
       background: var(--honey-amber);
       border: 2px solid var(--honey-dark);
       border-radius: 20px;
@@ -68,10 +68,10 @@
       margin-bottom: 16px;
     }
 
-    .grid {
+    .top-row {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 14px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
       margin-bottom: 16px;
     }
 
@@ -85,8 +85,7 @@
       font-size: 13px;
     }
 
-    input,
-    textarea {
+    input {
       border: none;
       border-radius: 10px;
       padding: 10px 12px;
@@ -95,41 +94,16 @@
       font-size: 14px;
     }
 
-    textarea {
-      min-height: 70px;
-      resize: none;
-    }
-
-    .toggles {
-      display: flex;
-      gap: 12px;
-      margin-bottom: 18px;
-    }
-
-    .toggle {
-      background: var(--honey);
-      border-radius: 10px;
-      padding: 8px 14px;
-      font-weight: 700;
-      font-size: 13px;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .toggle span {
-      background: #fff8e9;
-      border-radius: 999px;
-      padding: 2px 10px;
-    }
-
     .actions {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 10px;
+      margin-bottom: 14px;
     }
 
-    .actions button {
+    .actions button,
+    .tab,
+    .pill {
       border: none;
       border-radius: 10px;
       background: var(--honey);
@@ -137,6 +111,52 @@
       font-weight: 700;
       padding: 10px;
       cursor: pointer;
+      font-size: 13px;
+      text-align: center;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .tab.inactive {
+      background: var(--honey-light);
+    }
+
+    .content {
+      display: grid;
+      gap: 10px;
+    }
+
+    .control {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .slider {
+      height: 12px;
+      border-radius: 999px;
+      background: var(--honey-light);
+      position: relative;
+    }
+
+    .slider::after {
+      content: "";
+      position: absolute;
+      inset: 0 40% 0 0;
+      background: var(--honey);
+      border-radius: 999px;
+    }
+
+    .dropdown {
+      background: var(--honey-light);
+      border-radius: 10px;
+      padding: 8px 10px;
+      font-size: 13px;
     }
 
     .tag {
@@ -154,28 +174,19 @@
     <h1>HoneyLua Config Manager</h1>
     <div class="status">Ready • Auto load enabled • Auto save enabled</div>
 
-    <div class="grid">
+    <div class="top-row">
       <div class="field">
         <label>Config Name</label>
         <input value="default" />
       </div>
       <div class="field">
-        <label>Honey Level (1-10)</label>
-        <input value="5" />
+        <label>Auto Load</label>
+        <div class="pill">ON</div>
       </div>
       <div class="field">
-        <label>Glow</label>
-        <input value="ON" />
+        <label>Auto Save</label>
+        <div class="pill">ON</div>
       </div>
-      <div class="field">
-        <label>Notes</label>
-        <textarea>Sweet and smooth.</textarea>
-      </div>
-    </div>
-
-    <div class="toggles">
-      <div class="toggle">Auto Load <span>ON</span></div>
-      <div class="toggle">Auto Save <span>ON</span></div>
     </div>
 
     <div class="actions">
@@ -183,6 +194,31 @@
       <button>Save</button>
       <button>Load</button>
       <button>Reset</button>
+    </div>
+
+    <div class="tabs">
+      <div class="tab">Main</div>
+      <div class="tab inactive">Visual</div>
+      <div class="tab inactive">Misc</div>
+    </div>
+
+    <div class="content">
+      <div class="control">
+        <div>Auto Sprint</div>
+        <div class="pill">ON</div>
+      </div>
+      <div class="control">
+        <div>Quick Farm</div>
+        <div class="pill">RUN</div>
+      </div>
+      <div class="control">
+        <div>Speed</div>
+        <div class="slider"></div>
+      </div>
+      <div class="control">
+        <div>Target Mode</div>
+        <div class="dropdown">Nearest</div>
+      </div>
     </div>
   </div>
 </body>
