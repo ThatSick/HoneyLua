@@ -498,22 +498,26 @@ local function createTab(tabName, isSettings)
     end
 
     local function addDropdown(options)
-        local lbl = makeLabel(options.label)
-        local df = Instance.new("Frame"); df.Size = UDim2.fromOffset(160, 26); df.BackgroundTransparency = 1; df.ClipsDescendants = false; df.ZIndex = 2; df.Parent = scroll
-        local dd = Instance.new("TextButton"); dd.Size = UDim2.new(1, 0, 0, 26); dd.BackgroundColor3 = Color3.fromRGB(55, 48, 38); dd.BorderSizePixel = 0; dd.Font = Enum.Font.Gotham; dd.TextSize = settings.textSize; dd.TextColor3 = Color3.fromRGB(200, 180, 140); dd.AutoButtonColor = false; dd.ZIndex = 5; dd.Parent = df
-        Instance.new("UICorner", dd).CornerRadius = UDim.new(0, 6)
-        local arrow = Instance.new("TextLabel"); arrow.Size = UDim2.fromOffset(16, 26); arrow.Position = UDim2.new(1, -18, 0, 0); arrow.BackgroundTransparency = 1; arrow.Text = "▼"; arrow.TextColor3 = Color3.fromRGB(150, 130, 100); arrow.Font = Enum.Font.GothamBold; arrow.TextSize = 8; arrow.ZIndex = 6; arrow.Parent = dd
+        local row = Instance.new("Frame"); row.Size = UDim2.new(1, 0, 0, 28); row.BackgroundColor3 = Color3.fromRGB(50, 43, 35); row.BorderSizePixel = 0; row.ZIndex = 2; row.Parent = scroll
+        Instance.new("UICorner", row).CornerRadius = UDim.new(0, 6)
         
-        -- Dropdown list container with improved visibility
+        local lbl = Instance.new("TextLabel"); lbl.Size = UDim2.new(1, -170, 1, 0); lbl.Position = UDim2.fromOffset(10, 0); lbl.BackgroundTransparency = 1; lbl.Font = Enum.Font.Gotham; lbl.TextSize = settings.textSize; lbl.TextColor3 = Color3.fromRGB(200, 180, 140); lbl.TextXAlignment = Enum.TextXAlignment.Left; lbl.Text = options.label; lbl.ZIndex = 3; lbl.Parent = row
+        
+        local dd = Instance.new("TextButton"); dd.Size = UDim2.fromOffset(150, 22); dd.Position = UDim2.new(1, -160, 0.5, -11); dd.BackgroundColor3 = Color3.fromRGB(55, 48, 38); dd.BorderSizePixel = 0; dd.Font = Enum.Font.Gotham; dd.TextSize = settings.textSize; dd.TextColor3 = Color3.fromRGB(200, 180, 140); dd.AutoButtonColor = false; dd.ZIndex = 5; dd.Parent = row
+        Instance.new("UICorner", dd).CornerRadius = UDim.new(0, 6)
+        
+        local arrow = Instance.new("TextLabel"); arrow.Size = UDim2.fromOffset(16, 22); arrow.Position = UDim2.new(1, -18, 0, 0); arrow.BackgroundTransparency = 1; arrow.Text = "▼"; arrow.TextColor3 = Color3.fromRGB(150, 130, 100); arrow.Font = Enum.Font.GothamBold; arrow.TextSize = 8; arrow.ZIndex = 6; arrow.Parent = dd
+        
+        -- Dropdown list container
         local lf = Instance.new("Frame")
         lf.Size = UDim2.new(1, 0, 0, 0)
-        lf.Position = UDim2.fromOffset(0, 30)
-        lf.BackgroundColor3 = Color3.fromRGB(30, 25, 20) -- Darker bg for contrast
+        lf.Position = UDim2.fromOffset(0, 24) -- Positioned below the button
+        lf.BackgroundColor3 = Color3.fromRGB(30, 25, 20)
         lf.BorderSizePixel = 0
         lf.ClipsDescendants = true
         lf.Visible = false
-        lf.ZIndex = 100 -- Higher ZIndex to appear on top
-        lf.Parent = df
+        lf.ZIndex = 100
+        lf.Parent = dd -- Parent to the button so it moves with it
         Instance.new("UICorner", lf).CornerRadius = UDim.new(0, 8)
         
         -- Border stroke for dropdown list
@@ -537,6 +541,7 @@ local function createTab(tabName, isSettings)
         local function close() 
             if not isOpen then return end
             isOpen = false
+            row.ZIndex = 2 -- Reset ZIndex on close
             TweenService:Create(arrow, TweenInfo.new(0.2), {Rotation = 0}):Play()
             TweenService:Create(lf, TweenInfo.new(0.2), {Size = UDim2.new(1, 0, 0, 0)}):Play()
             task.delay(0.2, function() if not isOpen then lf.Visible = false end end) 
@@ -545,6 +550,7 @@ local function createTab(tabName, isSettings)
         local function open() 
             if isOpen then return end
             isOpen = true
+            row.ZIndex = 100 -- Set row ZIndex high so list is above other rows
             lf.Visible = true
             lf.Size = UDim2.new(1, 0, 0, 0)
             TweenService:Create(arrow, TweenInfo.new(0.2), {Rotation = 180}):Play()
@@ -585,11 +591,11 @@ local function createTab(tabName, isSettings)
         end
         
         createButtons()
-        sel(selected, true) -- silent initial selection
+        sel(selected, true)
         
         registerControl(options.id, selected, function() return selected end, function(v) sel(v) end)
         
-        local dropdownApi = {label = lbl, dropdown = dd, frame = df}
+        local dropdownApi = {label = lbl, dropdown = dd, frame = row}
         
         function dropdownApi:SetItems(newItems)
             items = newItems or {}
