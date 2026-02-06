@@ -503,17 +503,35 @@ local function createTab(tabName, isSettings)
         local dd = Instance.new("TextButton"); dd.Size = UDim2.new(1, 0, 0, 26); dd.BackgroundColor3 = Color3.fromRGB(55, 48, 38); dd.BorderSizePixel = 0; dd.Font = Enum.Font.Gotham; dd.TextSize = settings.textSize; dd.TextColor3 = Color3.fromRGB(200, 180, 140); dd.AutoButtonColor = false; dd.ZIndex = 5; dd.Parent = df
         Instance.new("UICorner", dd).CornerRadius = UDim.new(0, 6)
         local arrow = Instance.new("TextLabel"); arrow.Size = UDim2.fromOffset(16, 26); arrow.Position = UDim2.new(1, -18, 0, 0); arrow.BackgroundTransparency = 1; arrow.Text = "▼"; arrow.TextColor3 = Color3.fromRGB(150, 130, 100); arrow.Font = Enum.Font.GothamBold; arrow.TextSize = 8; arrow.ZIndex = 6; arrow.Parent = dd
-        local lf = Instance.new("Frame"); lf.Size = UDim2.new(1, 0, 0, 0); lf.Position = UDim2.fromOffset(0, 28); lf.BackgroundColor3 = Color3.fromRGB(50, 43, 35); lf.BorderSizePixel = 0; lf.ClipsDescendants = true; lf.Visible = false; lf.ZIndex = 50; lf.Parent = df
-        Instance.new("UICorner", lf).CornerRadius = UDim.new(0, 6)
-        local ll = Instance.new("UIListLayout"); ll.Padding = UDim.new(0, 2); ll.Parent = lf
-        local lp = Instance.new("UIPadding"); lp.PaddingTop = UDim.new(0, 3); lp.PaddingBottom = UDim.new(0, 3); lp.PaddingLeft = UDim.new(0, 3); lp.PaddingRight = UDim.new(0, 3); lp.Parent = lf
+        
+        -- Dropdown list container with improved visibility
+        local lf = Instance.new("Frame")
+        lf.Size = UDim2.new(1, 0, 0, 0)
+        lf.Position = UDim2.fromOffset(0, 30)
+        lf.BackgroundColor3 = Color3.fromRGB(30, 25, 20) -- Darker bg for contrast
+        lf.BorderSizePixel = 0
+        lf.ClipsDescendants = true
+        lf.Visible = false
+        lf.ZIndex = 100 -- Higher ZIndex to appear on top
+        lf.Parent = df
+        Instance.new("UICorner", lf).CornerRadius = UDim.new(0, 8)
+        
+        -- Border stroke for dropdown list
+        local stroke = Instance.new("UIStroke")
+        stroke.Color = Color3.fromRGB(255, 180, 80)
+        stroke.Thickness = 1.5
+        stroke.Transparency = 0.3
+        stroke.Parent = lf
+        
+        local ll = Instance.new("UIListLayout"); ll.Padding = UDim.new(0, 3); ll.Parent = lf
+        local lp = Instance.new("UIPadding"); lp.PaddingTop = UDim.new(0, 5); lp.PaddingBottom = UDim.new(0, 5); lp.PaddingLeft = UDim.new(0, 5); lp.PaddingRight = UDim.new(0, 5); lp.Parent = lf
         
         local items, selected, isOpen, itemBtns = options.items or {}, options.default or (options.items or {})[1], false, {}
         
-        local function sel(it) 
+        local function sel(it, silent) 
             selected = it
             dd.Text = "  " .. tostring(it)
-            if options.onChange then options.onChange(it) end 
+            if not silent and options.onChange then options.onChange(it) end 
         end
         
         local function close() 
@@ -530,7 +548,7 @@ local function createTab(tabName, isSettings)
             lf.Visible = true
             lf.Size = UDim2.new(1, 0, 0, 0)
             TweenService:Create(arrow, TweenInfo.new(0.2), {Rotation = 180}):Play()
-            TweenService:Create(lf, TweenInfo.new(0.25, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Size = UDim2.new(1, 0, 0, math.min(#items * 24 + 8, 200))}):Play()
+            TweenService:Create(lf, TweenInfo.new(0.25, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Size = UDim2.new(1, 0, 0, math.min(#items * 26 + 12, 200))}):Play()
             
             for i, b in ipairs(itemBtns) do 
                 b.Position = UDim2.new(0, -15, 0, 0)
@@ -548,30 +566,31 @@ local function createTab(tabName, isSettings)
             table.clear(itemBtns)
             for i, it in ipairs(items) do
                 local ib = Instance.new("TextButton")
-                ib.Size = UDim2.new(1, 0, 0, 20)
-                ib.BackgroundColor3 = Color3.fromRGB(65, 55, 45)
+                ib.Size = UDim2.new(1, 0, 0, 22)
+                ib.BackgroundColor3 = Color3.fromRGB(50, 42, 35)
                 ib.BorderSizePixel = 0
                 ib.Font = Enum.Font.Gotham
-                ib.TextSize = 10
-                ib.TextColor3 = Color3.fromRGB(200, 180, 140)
+                ib.TextSize = 11
+                ib.TextColor3 = Color3.fromRGB(220, 200, 160)
                 ib.Text = tostring(it)
                 ib.AutoButtonColor = false
-                ib.ZIndex = 51
+                ib.ZIndex = 101
                 ib.Parent = lf
-                Instance.new("UICorner", ib).CornerRadius = UDim.new(0, 4)
-                ib.MouseEnter:Connect(function() TweenService:Create(ib, TweenInfo.new(0.1), {BackgroundColor3 = Color3.fromRGB(255, 190, 80), TextColor3 = Color3.fromRGB(40, 30, 15)}):Play() end)
-                ib.MouseLeave:Connect(function() TweenService:Create(ib, TweenInfo.new(0.1), {BackgroundColor3 = Color3.fromRGB(65, 55, 45), TextColor3 = Color3.fromRGB(200, 180, 140)}):Play() end)
+                Instance.new("UICorner", ib).CornerRadius = UDim.new(0, 5)
+                ib.MouseEnter:Connect(function() TweenService:Create(ib, TweenInfo.new(0.1), {BackgroundColor3 = Color3.fromRGB(255, 190, 80), TextColor3 = Color3.fromRGB(30, 25, 15)}):Play() end)
+                ib.MouseLeave:Connect(function() TweenService:Create(ib, TweenInfo.new(0.1), {BackgroundColor3 = Color3.fromRGB(50, 42, 35), TextColor3 = Color3.fromRGB(220, 200, 160)}):Play() end)
                 ib.MouseButton1Click:Connect(function() sel(it); close() end)
                 table.insert(itemBtns, ib)
             end
         end
         
         createButtons()
-        sel(selected)
+        sel(selected, true) -- silent initial selection
         
         registerControl(options.id, selected, function() return selected end, function(v) sel(v) end)
         
         local dropdownApi = {label = lbl, dropdown = dd, frame = df}
+        
         function dropdownApi:SetItems(newItems)
             items = newItems or {}
             createButtons()
@@ -579,8 +598,22 @@ local function createTab(tabName, isSettings)
                 sel(items[1] or "None")
             end
             if isOpen then
-                TweenService:Create(lf, TweenInfo.new(0.2), {Size = UDim2.new(1, 0, 0, math.min(#items * 24 + 8, 200))}):Play()
+                TweenService:Create(lf, TweenInfo.new(0.2), {Size = UDim2.new(1, 0, 0, math.min(#items * 26 + 12, 200))}):Play()
             end
+        end
+        
+        function dropdownApi:SetValue(value, silent)
+            if table.find(items, value) then
+                sel(value, silent)
+            end
+        end
+        
+        function dropdownApi:GetValue()
+            return selected
+        end
+        
+        function dropdownApi:Refresh()
+            createButtons()
         end
         
         return dropdownApi
