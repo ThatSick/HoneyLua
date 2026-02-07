@@ -779,7 +779,7 @@ local function createTab(tabName, isSettings)
         return {row = row, getKey = function() return currentKey end, setKey = function(k) currentKey = k; keyBtn.Text = k end}
     end
 
-    local api = {AddToggle = addToggle, AddButton = addButton, AddSlider = addSlider, AddDropdown = addDropdown, AddSection = addSection, AddKeybind = addKeybind, AddText = addText, Container = scroll}
+    local api = {AddToggle = addToggle, AddButton = addButton, AddSlider = addSlider, AddDropdown = addDropdown, AddSection = addSection, AddKeybind = addKeybind, AddText = addText, Container = scroll, getNextLayoutOrder = getNextLayoutOrder}
     Tabs[tabName] = {button = tabBtn, container = container, api = api}
     tabBtn.MouseButton1Click:Connect(function() setTabActive(tabName) end)
     if not ActiveTab then setTabActive(tabName) end
@@ -792,7 +792,7 @@ local function buildSettingsTab(tabApi)
     tabApi.AddSection("Config Manager")
     updateSection("Config Manager")
 
-    local cfgRow = Instance.new("Frame"); cfgRow.Size = UDim2.new(1, 0, 0, 28); cfgRow.BackgroundColor3 = Color3.fromRGB(50, 43, 35); cfgRow.BorderSizePixel = 0; cfgRow.ZIndex = 2; cfgRow.Parent = scroll
+    local cfgRow = Instance.new("Frame"); cfgRow.Size = UDim2.new(1, 0, 0, 28); cfgRow.BackgroundColor3 = Color3.fromRGB(50, 43, 35); cfgRow.BorderSizePixel = 0; cfgRow.ZIndex = 2; cfgRow.LayoutOrder = tabApi.getNextLayoutOrder(); cfgRow.Parent = scroll
     Instance.new("UICorner", cfgRow).CornerRadius = UDim.new(0, 6)
     local cfgLbl = Instance.new("TextLabel"); cfgLbl.Size = UDim2.fromOffset(50, 28); cfgLbl.Position = UDim2.fromOffset(10, 0); cfgLbl.BackgroundTransparency = 1; cfgLbl.Font = Enum.Font.Gotham; cfgLbl.TextSize = 11; cfgLbl.TextColor3 = Color3.fromRGB(200, 180, 140); cfgLbl.TextXAlignment = Enum.TextXAlignment.Left; cfgLbl.Text = "Name"; cfgLbl.ZIndex = 3; cfgLbl.Parent = cfgRow
     local cfgBox = Instance.new("TextBox"); cfgBox.Size = UDim2.new(1, -70, 0, 20); cfgBox.Position = UDim2.fromOffset(60, 4); cfgBox.BackgroundColor3 = Color3.fromRGB(40, 35, 28); cfgBox.BorderSizePixel = 0; cfgBox.Font = Enum.Font.Gotham; cfgBox.TextSize = 10; cfgBox.TextColor3 = Color3.fromRGB(220, 200, 160); cfgBox.PlaceholderText = "config name..."; cfgBox.PlaceholderColor3 = Color3.fromRGB(120, 105, 80); cfgBox.ClearTextOnFocus = false; cfgBox.Text = currentConfigName; cfgBox.ZIndex = 3; cfgBox.Parent = cfgRow
@@ -816,7 +816,7 @@ local function buildSettingsTab(tabApi)
     refreshDropdown()
 
     local function makeToggleRow(label, on, key)
-        local row = Instance.new("Frame"); row.Size = UDim2.new(1, 0, 0, 28); row.BackgroundColor3 = Color3.fromRGB(50, 43, 35); row.BorderSizePixel = 0; row.ZIndex = 2; row.Parent = scroll
+        local row = Instance.new("Frame"); row.Size = UDim2.new(1, 0, 0, 28); row.BackgroundColor3 = Color3.fromRGB(50, 43, 35); row.BorderSizePixel = 0; row.ZIndex = 2; row.LayoutOrder = tabApi.getNextLayoutOrder(); row.Parent = scroll
         Instance.new("UICorner", row).CornerRadius = UDim.new(0, 6)
         local lbl = Instance.new("TextLabel"); lbl.Size = UDim2.new(1, -60, 1, 0); lbl.Position = UDim2.fromOffset(10, 0); lbl.BackgroundTransparency = 1; lbl.Font = Enum.Font.Gotham; lbl.TextSize = 11; lbl.TextColor3 = Color3.fromRGB(200, 180, 140); lbl.TextXAlignment = Enum.TextXAlignment.Left; lbl.Text = label; lbl.ZIndex = 3; lbl.Parent = row
         local tf = Instance.new("Frame"); tf.Size = UDim2.fromOffset(38, 18); tf.Position = UDim2.new(1, -48, 0.5, -9); tf.BackgroundColor3 = on and Color3.fromRGB(255, 190, 80) or Color3.fromRGB(70, 60, 45); tf.BorderSizePixel = 0; tf.ZIndex = 3; tf.Parent = row
@@ -836,7 +836,7 @@ local function buildSettingsTab(tabApi)
     makeToggleRow("Auto Load", settings.autoLoad, "autoLoad")
     makeToggleRow("Auto Save", settings.autoSave, "autoSave")
 
-    local actionsRow = Instance.new("Frame"); actionsRow.Size = UDim2.new(1, 0, 0, 28); actionsRow.BackgroundTransparency = 1; actionsRow.ZIndex = 2; actionsRow.Parent = scroll
+    local actionsRow = Instance.new("Frame"); actionsRow.Size = UDim2.new(1, 0, 0, 28); actionsRow.BackgroundTransparency = 1; actionsRow.ZIndex = 2; actionsRow.LayoutOrder = tabApi.getNextLayoutOrder(); actionsRow.Parent = scroll
     local al = Instance.new("UIListLayout"); al.FillDirection = Enum.FillDirection.Horizontal; al.Padding = UDim.new(0, 4); al.Parent = actionsRow
 
     local function makeBtn(text, w, isRed)
@@ -853,7 +853,7 @@ local function buildSettingsTab(tabApi)
     local createBtn, saveBtn, loadBtn, resetBtn = makeBtn("Create"), makeBtn("Save"), makeBtn("Load"), makeBtn("Reset")
     createBtn.Parent = actionsRow; saveBtn.Parent = actionsRow; loadBtn.Parent = actionsRow; resetBtn.Parent = actionsRow
 
-    local actionsRow2 = Instance.new("Frame"); actionsRow2.Size = UDim2.new(1, 0, 0, 28); actionsRow2.BackgroundTransparency = 1; actionsRow2.ZIndex = 2; actionsRow2.Parent = scroll
+    local actionsRow2 = Instance.new("Frame"); actionsRow2.Size = UDim2.new(1, 0, 0, 28); actionsRow2.BackgroundTransparency = 1; actionsRow2.ZIndex = 2; actionsRow2.LayoutOrder = tabApi.getNextLayoutOrder(); actionsRow2.Parent = scroll
     local al2 = Instance.new("UIListLayout"); al2.FillDirection = Enum.FillDirection.Horizontal; al2.Padding = UDim.new(0, 4); al2.Parent = actionsRow2
 
     local deleteBtn = makeBtn("Delete", 55, true); deleteBtn.Parent = actionsRow2
@@ -877,73 +877,58 @@ local function buildSettingsTab(tabApi)
         updateStatus("Default set to: " .. cfgBox.Text)
     end)
 
-    tabApi.AddSection("Theme")
-
-    -- Transparent toggle with apply
-    local transRow = Instance.new("Frame"); transRow.Size = UDim2.new(1, 0, 0, 28); transRow.BackgroundColor3 = Color3.fromRGB(50, 43, 35); transRow.BorderSizePixel = 0; transRow.ZIndex = 2; transRow.Parent = scroll
-    Instance.new("UICorner", transRow).CornerRadius = UDim.new(0, 6)
-    local transLbl = Instance.new("TextLabel"); transLbl.Size = UDim2.new(1, -60, 1, 0); transLbl.Position = UDim2.fromOffset(10, 0); transLbl.BackgroundTransparency = 1; transLbl.Font = Enum.Font.Gotham; transLbl.TextSize = 11; transLbl.TextColor3 = Color3.fromRGB(200, 180, 140); transLbl.TextXAlignment = Enum.TextXAlignment.Left; transLbl.Text = "Transparent"; transLbl.ZIndex = 3; transLbl.Parent = transRow
     local transTf = Instance.new("Frame"); transTf.Size = UDim2.fromOffset(38, 18); transTf.Position = UDim2.new(1, -48, 0.5, -9); transTf.BackgroundColor3 = settings.transparent and Color3.fromRGB(255, 190, 80) or Color3.fromRGB(70, 60, 45); transTf.BorderSizePixel = 0; transTf.ZIndex = 3; transTf.Parent = transRow
     Instance.new("UICorner", transTf).CornerRadius = UDim.new(1, 0)
     local transKnob = Instance.new("Frame"); transKnob.Size = UDim2.fromOffset(14, 14); transKnob.Position = settings.transparent and UDim2.fromOffset(22, 2) or UDim2.fromOffset(2, 2); transKnob.BackgroundColor3 = settings.transparent and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(150, 130, 100); transKnob.ZIndex = 4; transKnob.Parent = transTf
     Instance.new("UICorner", transKnob).CornerRadius = UDim.new(1, 0)
-    local transBtn = Instance.new("TextButton"); transBtn.Size = UDim2.new(1, 0, 1, 0); transBtn.BackgroundTransparency = 1; transBtn.Text = ""; transBtn.ZIndex = 5; transBtn.Parent = transRow
-    transBtn.MouseButton1Click:Connect(function()
-        settings.transparent = not settings.transparent; writeSettings(settings); local o = settings.transparent
-        TweenService:Create(transKnob, TweenInfo.new(0.2), {Position = o and UDim2.fromOffset(22, 2) or UDim2.fromOffset(2, 2), BackgroundColor3 = o and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(150, 130, 100)}):Play()
-        TweenService:Create(transTf, TweenInfo.new(0.2), {BackgroundColor3 = o and Color3.fromRGB(255, 190, 80) or Color3.fromRGB(70, 60, 45)}):Play()
-        applyTransparency(o)
-        updateStatus("Transparent: " .. (o and "ON" or "OFF"))
-    end)
 
     -- Animated Background toggle with apply
-    local animRow = Instance.new("Frame"); animRow.Size = UDim2.new(1, 0, 0, 28); animRow.BackgroundColor3 = Color3.fromRGB(50, 43, 35); animRow.BorderSizePixel = 0; animRow.ZIndex = 2; animRow.Parent = scroll
-    Instance.new("UICorner", animRow).CornerRadius = UDim.new(0, 6)
-    local animLbl = Instance.new("TextLabel"); animLbl.Size = UDim2.new(1, -60, 1, 0); animLbl.Position = UDim2.fromOffset(10, 0); animLbl.BackgroundTransparency = 1; animLbl.Font = Enum.Font.Gotham; animLbl.TextSize = 11; animLbl.TextColor3 = Color3.fromRGB(200, 180, 140); animLbl.TextXAlignment = Enum.TextXAlignment.Left; animLbl.Text = "Animated BG"; animLbl.ZIndex = 3; animLbl.Parent = animRow
-    local animTf = Instance.new("Frame"); animTf.Size = UDim2.fromOffset(38, 18); animTf.Position = UDim2.new(1, -48, 0.5, -9); animTf.BackgroundColor3 = settings.animatedBg and Color3.fromRGB(255, 190, 80) or Color3.fromRGB(70, 60, 45); animTf.BorderSizePixel = 0; animTf.ZIndex = 3; animTf.Parent = animRow
-    Instance.new("UICorner", animTf).CornerRadius = UDim.new(1, 0)
-    local animKnob = Instance.new("Frame"); animKnob.Size = UDim2.fromOffset(14, 14); animKnob.Position = settings.animatedBg and UDim2.fromOffset(22, 2) or UDim2.fromOffset(2, 2); animKnob.BackgroundColor3 = settings.animatedBg and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(150, 130, 100); animKnob.ZIndex = 4; animKnob.Parent = animTf
-    Instance.new("UICorner", animKnob).CornerRadius = UDim.new(1, 0)
-    local animBtn = Instance.new("TextButton"); animBtn.Size = UDim2.new(1, 0, 1, 0); animBtn.BackgroundTransparency = 1; animBtn.Text = ""; animBtn.ZIndex = 5; animBtn.Parent = animRow
-    animBtn.MouseButton1Click:Connect(function()
-        settings.animatedBg = not settings.animatedBg; writeSettings(settings); local o = settings.animatedBg
-        TweenService:Create(animKnob, TweenInfo.new(0.2), {Position = o and UDim2.fromOffset(22, 2) or UDim2.fromOffset(2, 2), BackgroundColor3 = o and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(150, 130, 100)}):Play()
-        TweenService:Create(animTf, TweenInfo.new(0.2), {BackgroundColor3 = o and Color3.fromRGB(255, 190, 80) or Color3.fromRGB(70, 60, 45)}):Play()
-        applyAnimatedBg(o)
-        updateStatus("Animated BG: " .. (o and "ON" or "OFF"))
-    end)
+    tabApi.AddSection("Theme")
 
-    local keyRow = Instance.new("Frame"); keyRow.Size = UDim2.new(1, 0, 0, 28); keyRow.BackgroundColor3 = Color3.fromRGB(50, 43, 35); keyRow.BorderSizePixel = 0; keyRow.ZIndex = 2; keyRow.Parent = scroll
-    Instance.new("UICorner", keyRow).CornerRadius = UDim.new(0, 6)
-    local keyLbl = Instance.new("TextLabel"); keyLbl.Size = UDim2.new(1, -90, 1, 0); keyLbl.Position = UDim2.fromOffset(10, 0); keyLbl.BackgroundTransparency = 1; keyLbl.Font = Enum.Font.Gotham; keyLbl.TextSize = 11; keyLbl.TextColor3 = Color3.fromRGB(200, 180, 140); keyLbl.TextXAlignment = Enum.TextXAlignment.Left; keyLbl.Text = "Open UI Key"; keyLbl.ZIndex = 3; keyLbl.Parent = keyRow
-    local keyBtn = Instance.new("TextButton"); keyBtn.Size = UDim2.fromOffset(70, 20); keyBtn.Position = UDim2.new(1, -80, 0.5, -10); keyBtn.BackgroundColor3 = Color3.fromRGB(60, 52, 42); keyBtn.BorderSizePixel = 0; keyBtn.Font = Enum.Font.GothamBold; keyBtn.TextSize = 9; keyBtn.TextColor3 = Color3.fromRGB(255, 200, 120); keyBtn.Text = settings.openKey; keyBtn.AutoButtonColor = false; keyBtn.ZIndex = 4; keyBtn.Parent = keyRow
-    Instance.new("UICorner", keyBtn).CornerRadius = UDim.new(0, 4)
-    local keyListening = false
-    keyBtn.MouseButton1Click:Connect(function()
-        if keyListening then return end; keyListening = true; keyBtn.Text = "..."
-        local conn; conn = UserInputService.InputBegan:Connect(function(input)
-            if input.UserInputType == Enum.UserInputType.Keyboard then
-                settings.openKey = input.KeyCode.Name; writeSettings(settings); keyBtn.Text = settings.openKey; keyListening = false; conn:Disconnect()
-            end
-        end)
-    end)
+    tabApi.AddToggle({
+        id = "transparency",
+        label = "Transparency",
+        default = settings.transparent,
+        onChange = function(v)
+            settings.transparent = v
+            TweenService:Create(transKnob, TweenInfo.new(0.2), {Position = v and UDim2.fromOffset(22, 2) or UDim2.fromOffset(2, 2), BackgroundColor3 = v and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(150, 130, 100)}):Play()
+            TweenService:Create(transTf, TweenInfo.new(0.2), {BackgroundColor3 = v and Color3.fromRGB(255, 190, 80) or Color3.fromRGB(70, 60, 45)}):Play()
+            applyTransparency(v)
+            writeSettings(settings)
+        end
+    })
 
-    -- Mobile Button toggle
-    local mobileRow = Instance.new("Frame"); mobileRow.Size = UDim2.new(1, 0, 0, 28); mobileRow.BackgroundColor3 = Color3.fromRGB(50, 43, 35); mobileRow.BorderSizePixel = 0; mobileRow.ZIndex = 2; mobileRow.Parent = scroll
-    Instance.new("UICorner", mobileRow).CornerRadius = UDim.new(0, 6)
-    local mobileLbl = Instance.new("TextLabel"); mobileLbl.Size = UDim2.new(1, -60, 1, 0); mobileLbl.Position = UDim2.fromOffset(10, 0); mobileLbl.BackgroundTransparency = 1; mobileLbl.Font = Enum.Font.Gotham; mobileLbl.TextSize = 11; mobileLbl.TextColor3 = Color3.fromRGB(200, 180, 140); mobileLbl.TextXAlignment = Enum.TextXAlignment.Left; mobileLbl.Text = "Mobile Button"; mobileLbl.ZIndex = 3; mobileLbl.Parent = mobileRow
-    local mobileTf = Instance.new("Frame"); mobileTf.Size = UDim2.fromOffset(38, 18); mobileTf.Position = UDim2.new(1, -48, 0.5, -9); mobileTf.BackgroundColor3 = settings.showMobileBtn and Color3.fromRGB(255, 190, 80) or Color3.fromRGB(70, 60, 45); mobileTf.BorderSizePixel = 0; mobileTf.ZIndex = 3; mobileTf.Parent = mobileRow
-    Instance.new("UICorner", mobileTf).CornerRadius = UDim.new(1, 0)
-    local mobileKnob = Instance.new("Frame"); mobileKnob.Size = UDim2.fromOffset(14, 14); mobileKnob.Position = settings.showMobileBtn and UDim2.fromOffset(22, 2) or UDim2.fromOffset(2, 2); mobileKnob.BackgroundColor3 = settings.showMobileBtn and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(150, 130, 100); mobileKnob.ZIndex = 4; mobileKnob.Parent = mobileTf
-    Instance.new("UICorner", mobileKnob).CornerRadius = UDim.new(1, 0)
-    local mobileBtn = Instance.new("TextButton"); mobileBtn.Size = UDim2.new(1, 0, 1, 0); mobileBtn.BackgroundTransparency = 1; mobileBtn.Text = ""; mobileBtn.ZIndex = 5; mobileBtn.Parent = mobileRow
-    mobileBtn.MouseButton1Click:Connect(function()
-        settings.showMobileBtn = not settings.showMobileBtn; writeSettings(settings); local o = settings.showMobileBtn
-        TweenService:Create(mobileKnob, TweenInfo.new(0.2), {Position = o and UDim2.fromOffset(22, 2) or UDim2.fromOffset(2, 2), BackgroundColor3 = o and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(150, 130, 100)}):Play()
-        TweenService:Create(mobileTf, TweenInfo.new(0.2), {BackgroundColor3 = o and Color3.fromRGB(255, 190, 80) or Color3.fromRGB(70, 60, 45)}):Play()
-        applyMobileBtn(o)
-        updateStatus("Mobile Button: " .. (o and "ON" or "OFF"))
-    end)
+    tabApi.AddToggle({
+        id = "animated_bg_toggle",
+        label = "Animated Background",
+        default = settings.animatedBg,
+        onChange = function(v)
+            settings.animatedBg = v
+            applyAnimatedBg(v)
+            writeSettings(settings)
+        end
+    })
+
+    tabApi.AddToggle({
+        id = "mobile_btn_toggle_setting",
+        label = "Mobile Toggle Button",
+        default = settings.showMobileBtn,
+        onChange = function(v)
+            settings.showMobileBtn = v
+            applyMobileBtn(v)
+            writeSettings(settings)
+        end
+    })
+
+    tabApi.AddKeybind({
+        id = "menu_open_keybind",
+        label = "Menu Keybind",
+        default = settings.openKey,
+        onChange = function(key)
+            settings.openKey = key
+            writeSettings(settings)
+        end
+    })
 
     UI.configNameBox = cfgBox
 end
