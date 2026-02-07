@@ -233,12 +233,36 @@ local function buildUI()
     tabContent.Name = "TabContent"; tabContent.Size = UDim2.new(1, -10, 1, -50); tabContent.Position = UDim2.fromOffset(5, 45)
     tabContent.BackgroundTransparency = 1; tabContent.ZIndex = 2; tabContent.Parent = contentArea
 
-    local resizeHandle = Instance.new("TextButton")
-    resizeHandle.Size = UDim2.fromOffset(14, 14); resizeHandle.Position = UDim2.new(1, -16, 1, -16)
-    resizeHandle.BackgroundColor3 = Color3.fromRGB(255, 190, 100); resizeHandle.BackgroundTransparency = 0.5
-    resizeHandle.Text = ""; resizeHandle.ZIndex = 10; resizeHandle.Parent = main
+    local resizeHandle = Instance.new("Frame")
+    resizeHandle.Name = "ResizeHandle"; resizeHandle.Size = UDim2.fromOffset(20, 20); resizeHandle.Position = UDim2.new(1, -20, 1, -20)
+    resizeHandle.BackgroundTransparency = 1; resizeHandle.ZIndex = 10; resizeHandle.Parent = main
 
-    local resizeCorner = Instance.new("UICorner"); resizeCorner.CornerRadius = UDim.new(0, 4); resizeCorner.Parent = resizeHandle
+    local resizeGlow = Instance.new("ImageLabel")
+    resizeGlow.Name = "Glow"; resizeGlow.Size = UDim2.new(1.5, 0, 1.5, 0); resizeGlow.Position = UDim2.new(-0.25, 0, -0.25, 0)
+    resizeGlow.BackgroundTransparency = 1; resizeGlow.Image = "rbxassetid://403448021"
+    resizeGlow.ImageColor3 = Color3.fromRGB(255, 190, 80); resizeGlow.ImageTransparency = 0.8; resizeGlow.ZIndex = 9; resizeGlow.Parent = resizeHandle
+
+    local resizeVisual = Instance.new("Frame")
+    resizeVisual.Size = UDim2.new(1, 0, 1, 0); resizeVisual.BackgroundTransparency = 1; resizeVisual.ZIndex = 11; resizeVisual.Parent = resizeHandle
+    
+    -- "Dots" grip effect
+    for i = 1, 3 do
+        for j = 1, i do
+            local dot = Instance.new("Frame")
+            dot.Size = UDim2.fromOffset(2, 2)
+            dot.Position = UDim2.fromOffset(20 - (i * 4), 20 - (j * 4))
+            dot.BackgroundColor3 = Color3.fromRGB(255, 190, 80)
+            dot.BackgroundTransparency = 0.3
+            dot.BorderSizePixel = 0; dot.ZIndex = 12; dot.Parent = resizeVisual
+            Instance.new("UICorner", dot).CornerRadius = UDim.new(1, 0)
+        end
+    end
+
+    local resizeBtn = Instance.new("TextButton")
+    resizeBtn.Size = UDim2.new(1, 0, 1, 0); resizeBtn.BackgroundTransparency = 1; resizeBtn.Text = ""; resizeBtn.ZIndex = 15; resizeBtn.Parent = resizeHandle
+    
+    -- Sync resizeHandle variable for the rest of the script
+    resizeHandle = resizeBtn
 
     screenGui.Parent = localPlayer:WaitForChild("PlayerGui")
 
@@ -252,33 +276,63 @@ local function buildUI()
 
     -- Mobile toggle button (transparent, draggable)
     local mobileBtn = Instance.new("TextButton")
-    mobileBtn.Name = "MobileButton"; mobileBtn.Size = UDim2.fromOffset(50, 50)
-    mobileBtn.Position = UDim2.new(0, 15, 0.5, -25); mobileBtn.BackgroundColor3 = Color3.fromRGB(255, 190, 80)
-    mobileBtn.BackgroundTransparency = 0.3; mobileBtn.Text = "🍯"; mobileBtn.TextSize = 24
-    mobileBtn.Font = Enum.Font.GothamBold; mobileBtn.TextColor3 = Color3.fromRGB(80, 50, 20)
-    mobileBtn.AutoButtonColor = false; mobileBtn.ZIndex = 999; mobileBtn.Visible = settings.showMobileBtn
-    mobileBtn.Parent = screenGui
+    mobileBtn.Name = "MobileToggle"; mobileBtn.Size = UDim2.fromOffset(45, 45)
+    mobileBtn.Position = UDim2.new(0.5, -22, 0.1, 0)
+    mobileBtn.BackgroundColor3 = Color3.fromRGB(25, 22, 18) -- Same as main UI
+    mobileBtn.BackgroundTransparency = 0.2
+    mobileBtn.Text = "🍯"
+    mobileBtn.Font = Enum.Font.GothamBold
+    mobileBtn.TextSize = 22
+    mobileBtn.TextColor3 = Color3.fromRGB(255, 210, 130)
+    mobileBtn.AutoButtonColor = false; mobileBtn.ZIndex = 11; mobileBtn.Parent = screenGui
+    
     Instance.new("UICorner", mobileBtn).CornerRadius = UDim.new(1, 0)
-    local mobileBtnStroke = Instance.new("UIStroke"); mobileBtnStroke.Color = Color3.fromRGB(200, 140, 50)
-    mobileBtnStroke.Thickness = 2; mobileBtnStroke.Transparency = 0.3; mobileBtnStroke.Parent = mobileBtn
+    
+    local mobileBtnStroke = Instance.new("UIStroke")
+    mobileBtnStroke.Color = Color3.fromRGB(255, 190, 80) -- Same as main UI
+    mobileBtnStroke.Thickness = 2.5
+    mobileBtnStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+    mobileBtnStroke.Transparency = 0.2
+    mobileBtnStroke.Parent = mobileBtn
+
+    -- Subtle glow for mobile button
+    local glow = Instance.new("ImageLabel")
+    glow.Name = "Glow"; glow.Size = UDim2.new(1.3, 0, 1.3, 0); glow.Position = UDim2.new(-0.15, 0, -0.15, 0)
+    glow.BackgroundTransparency = 1; glow.Image = "rbxassetid://403448021"
+    glow.ImageColor3 = Color3.fromRGB(255, 190, 80); glow.ImageTransparency = 0.8
+    glow.ZIndex = 10; glow.Parent = mobileBtn
+    
     MobileButton = mobileBtn
 
-    mobileBtn.MouseButton1Click:Connect(function() main.Visible = not main.Visible end)
-
-    -- Mobile button dragging
     local mobileDrag, mobileDragStart, mobileStartPos = false, nil, nil
+    local wasDragged = false
+    
     mobileBtn.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
             mobileDrag = true; mobileDragStart = input.Position; mobileStartPos = mobileBtn.Position
+            wasDragged = false
         end
     end)
+    
     mobileBtn.InputEnded:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then mobileDrag = false end
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then 
+            mobileDrag = false 
+        end
     end)
+    
     UserInputService.InputChanged:Connect(function(input)
         if mobileDrag and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
             local delta = input.Position - mobileDragStart
+            if delta.Magnitude > 5 then
+                wasDragged = true
+            end
             mobileBtn.Position = UDim2.new(mobileStartPos.X.Scale, mobileStartPos.X.Offset + delta.X, mobileStartPos.Y.Scale, mobileStartPos.Y.Offset + delta.Y)
+        end
+    end)
+
+    mobileBtn.MouseButton1Click:Connect(function() 
+        if not wasDragged then
+            main.Visible = not main.Visible 
         end
     end)
 
@@ -459,7 +513,10 @@ local function createTab(tabName, isSettings)
         apply(state, false)
         local btn = Instance.new("TextButton"); btn.Size = UDim2.new(1, 0, 1, 0); btn.BackgroundTransparency = 1; btn.Text = ""; btn.ZIndex = 5; btn.Parent = row
         btn.MouseButton1Click:Connect(function() apply(not state, true); if options.onChange then options.onChange(state) end end)
-        registerControl(options.id, options.default or false, function() return state end, function(v) apply(v, false) end)
+        registerControl(options.id, options.default or false, function() return state end, function(v) 
+            apply(v, false)
+            if options.onChange then options.onChange(v) end
+        end)
         return {row = row}
     end
 
@@ -659,20 +716,6 @@ local function buildSettingsTab(tabApi)
     tabApi.AddSection("Config Manager")
     updateSection("Config Manager")
 
-    -- Config dropdown (on top with high ZIndex)
-    local cfgDropRow = Instance.new("Frame"); cfgDropRow.Size = UDim2.new(1, 0, 0, 28); cfgDropRow.BackgroundColor3 = Color3.fromRGB(50, 43, 35); cfgDropRow.BorderSizePixel = 0; cfgDropRow.ZIndex = 60; cfgDropRow.ClipsDescendants = false; cfgDropRow.Parent = scroll
-    Instance.new("UICorner", cfgDropRow).CornerRadius = UDim.new(0, 6)
-    local cfgDropLbl = Instance.new("TextLabel"); cfgDropLbl.Size = UDim2.fromOffset(50, 28); cfgDropLbl.Position = UDim2.fromOffset(10, 0); cfgDropLbl.BackgroundTransparency = 1; cfgDropLbl.Font = Enum.Font.Gotham; cfgDropLbl.TextSize = 11; cfgDropLbl.TextColor3 = Color3.fromRGB(200, 180, 140); cfgDropLbl.TextXAlignment = Enum.TextXAlignment.Left; cfgDropLbl.Text = "Config"; cfgDropLbl.ZIndex = 61; cfgDropLbl.Parent = cfgDropRow
-    local cfgDropBtn = Instance.new("TextButton"); cfgDropBtn.Size = UDim2.new(1, -70, 0, 20); cfgDropBtn.Position = UDim2.fromOffset(60, 4); cfgDropBtn.BackgroundColor3 = Color3.fromRGB(55, 48, 38); cfgDropBtn.BorderSizePixel = 0; cfgDropBtn.Font = Enum.Font.Gotham; cfgDropBtn.TextSize = 10; cfgDropBtn.TextColor3 = Color3.fromRGB(200, 180, 140); cfgDropBtn.AutoButtonColor = false; cfgDropBtn.Text = "  " .. currentConfigName; cfgDropBtn.TextXAlignment = Enum.TextXAlignment.Left; cfgDropBtn.ZIndex = 61; cfgDropBtn.Parent = cfgDropRow
-    Instance.new("UICorner", cfgDropBtn).CornerRadius = UDim.new(0, 4)
-    local cfgDropArrow = Instance.new("TextLabel"); cfgDropArrow.Size = UDim2.fromOffset(16, 20); cfgDropArrow.Position = UDim2.new(1, -18, 0, 0); cfgDropArrow.BackgroundTransparency = 1; cfgDropArrow.Text = "▼"; cfgDropArrow.TextColor3 = Color3.fromRGB(150, 130, 100); cfgDropArrow.Font = Enum.Font.GothamBold; cfgDropArrow.TextSize = 8; cfgDropArrow.ZIndex = 62; cfgDropArrow.Parent = cfgDropBtn
-    local cfgDropList = Instance.new("Frame"); cfgDropList.Size = UDim2.new(1, -70, 0, 0); cfgDropList.Position = UDim2.fromOffset(60, 26); cfgDropList.BackgroundColor3 = Color3.fromRGB(50, 43, 35); cfgDropList.BorderSizePixel = 0; cfgDropList.ClipsDescendants = true; cfgDropList.Visible = false; cfgDropList.ZIndex = 70; cfgDropList.Parent = cfgDropRow
-    Instance.new("UICorner", cfgDropList).CornerRadius = UDim.new(0, 6)
-    local cfgDropLayout = Instance.new("UIListLayout"); cfgDropLayout.Padding = UDim.new(0, 2); cfgDropLayout.Parent = cfgDropList
-    local cfgDropPad = Instance.new("UIPadding"); cfgDropPad.PaddingTop = UDim.new(0, 3); cfgDropPad.PaddingBottom = UDim.new(0, 3); cfgDropPad.PaddingLeft = UDim.new(0, 3); cfgDropPad.PaddingRight = UDim.new(0, 3); cfgDropPad.Parent = cfgDropList
-    local cfgDropOpen = false
-    local cfgDropItems = {}
-
     local cfgRow = Instance.new("Frame"); cfgRow.Size = UDim2.new(1, 0, 0, 28); cfgRow.BackgroundColor3 = Color3.fromRGB(50, 43, 35); cfgRow.BorderSizePixel = 0; cfgRow.ZIndex = 2; cfgRow.Parent = scroll
     Instance.new("UICorner", cfgRow).CornerRadius = UDim.new(0, 6)
     local cfgLbl = Instance.new("TextLabel"); cfgLbl.Size = UDim2.fromOffset(50, 28); cfgLbl.Position = UDim2.fromOffset(10, 0); cfgLbl.BackgroundTransparency = 1; cfgLbl.Font = Enum.Font.Gotham; cfgLbl.TextSize = 11; cfgLbl.TextColor3 = Color3.fromRGB(200, 180, 140); cfgLbl.TextXAlignment = Enum.TextXAlignment.Left; cfgLbl.Text = "Name"; cfgLbl.ZIndex = 3; cfgLbl.Parent = cfgRow
@@ -680,39 +723,21 @@ local function buildSettingsTab(tabApi)
     Instance.new("UICorner", cfgBox).CornerRadius = UDim.new(0, 4)
     local cfgPad = Instance.new("UIPadding"); cfgPad.PaddingLeft = UDim.new(0, 6); cfgPad.Parent = cfgBox
 
-    local function refreshDropdown()
-        for _, c in ipairs(cfgDropItems) do c:Destroy() end
-        cfgDropItems = {}
-        local configs = listConfigs()
-        for _, cfg in ipairs(configs) do
-            local ib = Instance.new("TextButton"); ib.Size = UDim2.new(1, 0, 0, 20); ib.BackgroundColor3 = Color3.fromRGB(65, 55, 45); ib.BorderSizePixel = 0; ib.Font = Enum.Font.Gotham; ib.TextSize = 10; ib.TextColor3 = Color3.fromRGB(200, 180, 140); ib.Text = cfg; ib.AutoButtonColor = false; ib.ZIndex = 71; ib.Parent = cfgDropList
-            Instance.new("UICorner", ib).CornerRadius = UDim.new(0, 4)
-            ib.MouseEnter:Connect(function() TweenService:Create(ib, TweenInfo.new(0.1), {BackgroundColor3 = Color3.fromRGB(255, 190, 80), TextColor3 = Color3.fromRGB(40, 30, 15)}):Play() end)
-            ib.MouseLeave:Connect(function() TweenService:Create(ib, TweenInfo.new(0.1), {BackgroundColor3 = Color3.fromRGB(65, 55, 45), TextColor3 = Color3.fromRGB(200, 180, 140)}):Play() end)
-            ib.MouseButton1Click:Connect(function()
-                cfgDropBtn.Text = "  " .. cfg; cfgBox.Text = cfg
-                cfgDropOpen = false; cfgDropList.Visible = false
-                TweenService:Create(cfgDropArrow, TweenInfo.new(0.2), {Rotation = 0}):Play()
-                TweenService:Create(cfgDropList, TweenInfo.new(0.2), {Size = UDim2.new(1, -70, 0, 0)}):Play()
-            end)
-            table.insert(cfgDropItems, ib)
+    local configDropdown = tabApi.AddDropdown({
+        id = "config_selector",
+        label = "Config",
+        items = listConfigs(),
+        default = currentConfigName,
+        onChange = function(val)
+            cfgBox.Text = val
         end
+    })
+
+    local function refreshDropdown()
+        configDropdown:SetItems(listConfigs())
+        configDropdown:SetValue(currentConfigName, true)
     end
     refreshDropdown()
-
-    cfgDropBtn.MouseButton1Click:Connect(function()
-        if cfgDropOpen then
-            cfgDropOpen = false
-            TweenService:Create(cfgDropArrow, TweenInfo.new(0.2), {Rotation = 0}):Play()
-            TweenService:Create(cfgDropList, TweenInfo.new(0.2), {Size = UDim2.new(1, -70, 0, 0)}):Play()
-            task.delay(0.2, function() if not cfgDropOpen then cfgDropList.Visible = false end end)
-        else
-            refreshDropdown()
-            cfgDropOpen = true; cfgDropList.Visible = true; cfgDropList.Size = UDim2.new(1, -70, 0, 0)
-            TweenService:Create(cfgDropArrow, TweenInfo.new(0.2), {Rotation = 180}):Play()
-            TweenService:Create(cfgDropList, TweenInfo.new(0.25, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Size = UDim2.new(1, -70, 0, #listConfigs() * 24 + 8)}):Play()
-        end
-    end)
 
     local function makeToggleRow(label, on, key)
         local row = Instance.new("Frame"); row.Size = UDim2.new(1, 0, 0, 28); row.BackgroundColor3 = Color3.fromRGB(50, 43, 35); row.BorderSizePixel = 0; row.ZIndex = 2; row.Parent = scroll
@@ -756,18 +781,18 @@ local function buildSettingsTab(tabApi)
     local al2 = Instance.new("UIListLayout"); al2.FillDirection = Enum.FillDirection.Horizontal; al2.Padding = UDim.new(0, 4); al2.Parent = actionsRow2
 
     local deleteBtn = makeBtn("Delete", 55, true); deleteBtn.Parent = actionsRow2
-    local setDefaultBtn = makeBtn("Set Default", 70); setDefaultBtn.Parent = actionsRow2
+    local setDefaultBtn = makeBtn("Set As Default", 70); setDefaultBtn.Parent = actionsRow2
 
-    createBtn.MouseButton1Click:Connect(function() if cfgBox.Text == "" then updateStatus("Enter a config name.") return end; createConfig(cfgBox.Text); cfgBox.Text = currentConfigName; UI.configLabel.Text = "Current: " .. currentConfigName; cfgDropBtn.Text = "  " .. currentConfigName; refreshDropdown() end)
+    createBtn.MouseButton1Click:Connect(function() if cfgBox.Text == "" then updateStatus("Enter a config name.") return end; createConfig(cfgBox.Text); cfgBox.Text = currentConfigName; refreshDropdown() end)
     saveBtn.MouseButton1Click:Connect(function() saveConfig() end)
-    loadBtn.MouseButton1Click:Connect(function() if cfgBox.Text == "" then updateStatus("Enter a config name.") return end; loadConfig(cfgBox.Text); cfgBox.Text = currentConfigName; UI.configLabel.Text = "Current: " .. currentConfigName; cfgDropBtn.Text = "  " .. currentConfigName end)
+    loadBtn.MouseButton1Click:Connect(function() if cfgBox.Text == "" then updateStatus("Enter a config name.") return end; loadConfig(cfgBox.Text); cfgBox.Text = currentConfigName; configDropdown:SetValue(currentConfigName, true) end)
     resetBtn.MouseButton1Click:Connect(function() resetCurrentConfig() end)
     deleteBtn.MouseButton1Click:Connect(function()
         if cfgBox.Text == "" or cfgBox.Text == "default" then updateStatus("Cannot delete default config.") return end
         showPrompt("Delete config '" .. cfgBox.Text .. "'?", function()
             deleteConfigFile(cfgBox.Text); updateStatus("Deleted: " .. cfgBox.Text)
             if currentConfigName == cfgBox.Text then currentConfigName = "default"; configData = readConfig("default") end
-            cfgBox.Text = currentConfigName; UI.configLabel.Text = "Current: " .. currentConfigName; cfgDropBtn.Text = "  " .. currentConfigName; refreshDropdown()
+            cfgBox.Text = currentConfigName; refreshDropdown()
         end)
     end)
     setDefaultBtn.MouseButton1Click:Connect(function()
