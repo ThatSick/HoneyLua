@@ -97,18 +97,28 @@ end
 
 local function blinkNotification(notif)
     if not notif.frame then return end
-    local originalColor = notif.frame.BackgroundColor3
-    TweenService:Create(notif.frame, TweenInfo.new(0.1), {BackgroundColor3 = Color3.fromRGB(255, 220, 150)}):Play()
+    
+    -- Use theme-consistent blink color (lighter amber)
+    local blinkColor = Color3.fromRGB(255, 230, 160)
+    local originalColor = COLORS.background
+    
+    TweenService:Create(notif.frame, TweenInfo.new(0.08), {BackgroundColor3 = blinkColor}):Play()
     task.delay(0.1, function()
         if notif.frame and notif.frame.Parent then
-            TweenService:Create(notif.frame, TweenInfo.new(0.15), {BackgroundColor3 = originalColor}):Play()
+            TweenService:Create(notif.frame, TweenInfo.new(0.2), {BackgroundColor3 = originalColor}):Play()
         end
     end)
+
     -- Reset the progress bar
     if notif.progressFill then
+        -- Cancel existing tween by setting size directly
         notif.progressFill.Size = UDim2.new(1, 0, 1, 0)
-        local dur = notif.duration or 3
-        TweenService:Create(notif.progressFill, TweenInfo.new(dur, Enum.EasingStyle.Linear), {Size = UDim2.new(0, 0, 1, 0)}):Play()
+        task.defer(function()
+            if notif.progressFill and notif.progressFill.Parent then
+                local dur = notif.duration or 3
+                TweenService:Create(notif.progressFill, TweenInfo.new(dur, Enum.EasingStyle.Linear), {Size = UDim2.new(0, 0, 1, 0)}):Play()
+            end
+        end)
     end
 end
 
@@ -122,10 +132,11 @@ local function removeNotification(notif)
     local stroke = frame:FindFirstChildOfClass("UIStroke")
     
     -- Fade out and slide right animation
-    TweenService:Create(frame, TweenInfo.new(0.35, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
+    local slideOut = TweenService:Create(frame, TweenInfo.new(0.35, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
         Position = frame.Position + UDim2.new(0, sizes.width + 50, 0, 0),
         BackgroundTransparency = 1
-    }):Play()
+    })
+    slideOut:Play()
     
     -- Fade out stroke
     if stroke then
@@ -150,14 +161,36 @@ local function removeNotification(notif)
     end
     
     -- Smoothly reposition remaining notifications
-    task.delay(0.1, function()
+    task.spawn(function()
+        task.wait(0.1)
         repositionNotifications()
     end)
     
     -- Destroy after animation completes
-    task.delay(0.35, function()
-        if frame then
-            frame:Destroy()
+    slideOut.Completed:Connect(function()
+        frame:Destroy()
+    end)
+end
+
+-- Global monitor to handle removals reliably
+local isMonitoring = false
+local function startMonitoring()
+    if isMonitoring then return end
+    isMonitoring = true
+    task.spawn(function()
+        while isMonitoring do
+            local now = tick()
+            for i = #notifications, 1, -1 do
+                local notif = notifications[i]
+                if now >= notif.removeAt and not notif.removing then
+                    removeNotification(notif)
+                end
+            end
+            if #notifications == 0 then
+                isMonitoring = false
+                break
+            end
+            task.wait(0.2)
         end
     end)
 end
@@ -183,8 +216,9 @@ local function createNotification(options)
     -- Check for existing notification with same text
     local existing = findExistingNotification(text)
     if existing then
-        blinkNotification(existing)
         existing.removeAt = tick() + duration
+        blinkNotification(existing)
+        startMonitoring()
         return existing
     end
     
@@ -330,21 +364,8 @@ local function createNotification(options)
         end)
     end)
     
-    -- Progress bar countdown animation
-    task.delay(0.4, function()
-        if progressFill and progressFill.Parent then
-            TweenService:Create(progressFill, TweenInfo.new(duration, Enum.EasingStyle.Linear), {
-                Size = UDim2.new(0, 0, 1, 0)
-            }):Play()
-        end
-    end)
-    
-    -- Auto remove after duration
-    task.delay(duration + 0.4, function()
-        if notif.removeAt <= tick() then
-            removeNotification(notif)
-        end
-    end)
+    -- Start monitoring removals
+    startMonitoring()
     
     return notif
 end
